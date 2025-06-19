@@ -7,7 +7,7 @@ import SubirArchivo from '../../components/SubirArchivo.vue';
       Seleccione o arrastre el plan unico de cuentas
       <SubirArchivo
           url="/medios_magneticos/puc/"
-          accept="text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          accept="text/csv"
           :multiple="false"
           name="archivo"
       />

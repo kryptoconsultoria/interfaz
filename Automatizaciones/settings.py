@@ -34,7 +34,6 @@ LANGUAGE_CODE = 'es'
 USE_I18N = True
 USE_L10N = True
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_vite',
     'panel_principal',
-    'medios_magneticos'
+    'medios_magneticos',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -123,25 +123,7 @@ DATABASES = {
 DATABASE_ROUTERS = ['Automatizaciones.routers.medios_magneticos.MediosMagneticosRouter',
                     'Automatizaciones.routers.django_apps_router.DjangoAppsRouter']
 
-LOGGING = {
-    'version': 1,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-        # puedes añadir uno para tu app:
-        'miapp': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-    },
-}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -177,6 +159,8 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+FASTAPI_URL = 'http://127.0.0.1:40//medios_magneticos'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Cambia esto dependiendo de tu proveedor de correo
 EMAIL_PORT = 587
@@ -221,7 +205,12 @@ DJANGO_VITE = {
         "dev_server_port": 5173,
         "static_url_prefix": ''  # si quieres agrupar bajo /static/
     }
+
+
 }
+
+# Urls de sharepoint
+SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
 
 # Duración en segundos de la sesión si "Recordarme" está activado (por ejemplo, 30 días)
 REMEMBER_ME_DURATION = 60 * 60 * 24 * 30  # 30 días

@@ -1,10 +1,12 @@
 <script setup>
 
 import SubirArchivo from "@/components/SubirArchivo.vue";
+import Toast from "primevue/toast";
 </script>
 
 <template>
   <div class="flex flex-col gap-4 w-full">
+     <Toast />
      Seleccione o arrastre el último balance a la fecha
      <SubirArchivo
         url="/medios_magneticos/balances/"

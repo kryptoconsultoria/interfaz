@@ -46,51 +46,43 @@ export default {
         this.cargando = false;
       }
     },
-    async obtenerEstado() {
-      try {
-        const respuesta = await fetch("/medios_magneticos/estado_automatizacion/");
-        const data = await respuesta.json();
-        if (data.detalle) {
-          this.robot = data.detalle.tarea || "No especificado";
-          this.historiaUsuario = data.detalle.historiausuario || "No especificada";
-          this.estado = data.detalle.estado || "Sin estado";
-          this.detalleError = data.detalle.errordetalle || "Sin detalles";
+    conectarWebSocket() {
+      this.socket = new WebSocket("ws://localhost:8000/ws/estado/");
 
-          const estadoInferior = this.estado.toLowerCase();
-          if (estadoInferior.includes("error") || estadoInferior.includes("fallo")) {
-            this.detenerPolling();
-          }
-        } else {
-          this.error = "No se pudo obtener el estado actual.";
-          this.detenerPolling();
+      this.socket.onopen = () => {
+        this.conectado = true;
+        console.log("Conectado al WebSocket");
+      };
+
+      this.socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        this.robot = data.robot;
+        this.estado = data.estado;
+        this.detalle = data.detalle;
+
+        // Detener conexión si el estado es "finalizado"
+        if (
+          this.robot === "subir_insumos.robot" &&
+          this.estado.toLowerCase() === "finalizado"
+        ) {
+          this.socket.close();
         }
-      } catch (err) {
-        this.error = "Error al obtener el estado de la automatización.";
-        this.detenerPolling();
+      };
+
+        this.socket.onclose = () => {
+          this.conectado = false;
+          console.log("WebSocket cerrado");
+        };
       }
     },
     obtenerTokenCSRF() {
       const match = document.cookie.match(/csrftoken=([^;]+)/);
       return match ? match[1] : "";
     },
-    iniciarPolling() {
-      this.obtenerEstado(); // obtener primero antes del primer intervalo
-      this.intervalo = setInterval(this.obtenerEstado, 5000);
+    mounted() {
+      this.conectarWebSocket();
     },
-    detenerPolling() {
-      if (this.intervalo) {
-        clearInterval(this.intervalo);
-        this.intervalo = null;
-      }
-    }
-  },
-  mounted() {
-    // No mostrar el card inicialmente
-  },
-  beforeUnmount() {
-    this.detenerPolling();
-  }
-};
+  };
 </script>
 
 <template>
@@ -116,7 +108,7 @@ export default {
 
     <!-- Tarjeta con información, solo visible después de iniciar automatización -->
     <Card
-      v-if="mostrarCard"
+      v-if="conectado"
       class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center font-medium"
     >
       <template #title>

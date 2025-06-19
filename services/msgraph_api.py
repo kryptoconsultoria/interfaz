@@ -44,7 +44,7 @@ class MSGraphAPI:
             raise Exception(
                 f"Error al listar drives: {response.status_code}, {response.json()}"
             )
-    def list_folders(self, hostname, drive_id, parent_folder_path=""):
+    def list_files_folders(self, hostname, drive_id, parent_folder_path="",item_type="folder"):
         """
         Lista las carpetas dentro de un drive en SharePoint.
         :param hostname: Dominio del sitio de SharePoint (por ejemplo, "example.sharepoint.com").
@@ -61,12 +61,10 @@ class MSGraphAPI:
 
         response = requests.get(url, headers=headers, verify=True)
 
-        print(response.json())
-
         if response.status_code == 200:
             # Filtrar solo carpetas de los elementos devueltos
             folders = [
-                item for item in response.json()["value"] if item["folder"]
+                item for item in response.json()["value"] if item[item_type]
             ]
             return folders
         else:
