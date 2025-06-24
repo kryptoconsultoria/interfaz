@@ -27,61 +27,33 @@ export default {
             "X-CSRFToken": this.obtenerTokenCSRF()
           }
         });
-        const data = await respuesta.json();
-        console.log(data);
+        const resp = await respuesta.json();
 
-        if (data.estado === "exitoso") {
-          this.mostrarCard = true;
-          this.iniciarPolling(); // Solo inicia polling si la automatización fue exitosa
+        if (resp.success == true){
+            const info = resp.data;
+            this.cargando = false;
+            this.mostrarCard = true;
+            this.robot = info.Tarea;
+            this.estado = info.Estado;
+            this.historiaUsuario = info.HistoriaUsuario || "";
+            this.detalleError = info.ErrorDetalle || "";
+            this.error = "";
         } else {
-          this.error = data.message || "Error al iniciar la automatización.";
           this.mostrarCard = true;
-          this.detenerPolling();
+          this.error = resp.message || "Error al iniciar la automatización.";
         }
       } catch (err) {
         this.error = "Error de red o servidor: " + err;
-        this.mostrarCard = true;
-        this.detenerPolling();
       } finally {
         this.cargando = false;
-      }
-    },
-    conectarWebSocket() {
-      this.socket = new WebSocket("ws://localhost:8000/ws/estado/");
-
-      this.socket.onopen = () => {
-        this.conectado = true;
-        console.log("Conectado al WebSocket");
-      };
-
-      this.socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        this.robot = data.robot;
-        this.estado = data.estado;
-        this.detalle = data.detalle;
-
-        // Detener conexión si el estado es "finalizado"
-        if (
-          this.robot === "subir_insumos.robot" &&
-          this.estado.toLowerCase() === "finalizado"
-        ) {
-          this.socket.close();
-        }
-      };
-
-        this.socket.onclose = () => {
-          this.conectado = false;
-          console.log("WebSocket cerrado");
-        };
+        this.mostrarCard = true;
       }
     },
     obtenerTokenCSRF() {
       const match = document.cookie.match(/csrftoken=([^;]+)/);
       return match ? match[1] : "";
-    },
-    mounted() {
-      this.conectarWebSocket();
-    },
+    }
+   },
   };
 </script>
 
@@ -108,7 +80,7 @@ export default {
 
     <!-- Tarjeta con información, solo visible después de iniciar automatización -->
     <Card
-      v-if="conectado"
+      v-if="mostrarCard"
       class="border-2 border-dashed border-surface-200 dark:border-surface-700 rounded bg-surface-50 dark:bg-surface-950 flex-auto flex justify-center font-medium"
     >
       <template #title>

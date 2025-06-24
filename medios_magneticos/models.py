@@ -255,6 +255,7 @@ class Estado(models.Model):
     errordetalle = models.TextField(db_column='ErrorDetalle', blank=True, null=True)  # Field name made lowercase.
     fecha = models.DateTimeField(db_column='Fecha', blank=True, null=True)  # Field name made lowercase.
     idbot = models.IntegerField(db_column='IdBot', blank=True, null=True)  # Field name made lowercase.
+    usuario = models.CharField(db_column='Usuario', max_length=45, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

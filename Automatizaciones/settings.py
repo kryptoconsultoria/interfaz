@@ -45,8 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_vite',
     'panel_principal',
-    'medios_magneticos',
-    'channels'
+    'medios_magneticos'
 ]
 
 MIDDLEWARE = [
@@ -57,7 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 
 ]
 
@@ -189,6 +189,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
@@ -205,18 +206,12 @@ DJANGO_VITE = {
         "dev_server_port": 5173,
         "static_url_prefix": ''  # si quieres agrupar bajo /static/
     }
-
-
 }
+
 
 # Urls de sharepoint
 SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
 
-# Duración en segundos de la sesión si "Recordarme" está activado (por ejemplo, 30 días)
-REMEMBER_ME_DURATION = 60 * 60 * 24 * 30  # 30 días
-# Duración por defecto si no se selecciona "Recordarme"
-SESSION_COOKIE_AGE = 60 * 60 * 2  # 2 horas
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Importante: que no expire al cerrar el navegador
 MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }

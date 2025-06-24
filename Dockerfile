@@ -1,31 +1,40 @@
-FROM python:3.12 AS builder
+# Etapa 1: Construcción del frontend con Vite
+FROM node:18 AS frontend
 
-WORKDIR /app
+WORKDIR /app/frontend
 
 
-# Instala herramientas de compilación necesarias
-COPY requirements.txt .
+COPY frontend/package*.json ./
+RUN npm install
 
-# Asegura que haya versión moderna de wheel (para evitar errores con thriftpy2)
-RUN pip install --upgrade pip wheel setuptools \
-    && pip install --no-cache-dir -r requirements.txt
+COPY frontend/ .
+RUN npm run build
 
-# ┌────────── Etapa final ──────────────────────────────┐
-FROM python:3.12
 
-WORKDIR /app
 
-# Instala solo runtime dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       libpq5 \
+# Etapa 2: Backend Django
+FROM python:3.12 AS backend
+
+RUN apt-get update && apt-get install -y \
+    build-essential libpq-dev curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
+WORKDIR /app
 
-# Comando de arranque (ajusta según tu app)
-CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
+# Copiara todo menos lo que se ignora en .dockerignore
+COPY ..
+
+# Instalar dependencias de Python
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copiar assets generados por Vite al lugar esperado por Django
+COPY --from=frontend /app/frontend/dist ./static/
+
+# Exponer puerto
+EXPOSE 8000
+
+# Comando de arranque
+CMD ["gunicorn", "django_vite.wsgi:application", "--bind", "0.0.0.0:8000"]
 
 
 

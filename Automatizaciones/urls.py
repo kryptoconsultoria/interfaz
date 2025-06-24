@@ -79,6 +79,5 @@ urlpatterns = [
     path('medios_magneticos/planillas/', planillas, name='planillas'),
     path('medios_magneticos/ingresos_retenciones/', ingresos_retenciones, name='ingresos_retenciones'),
     path('medios_magneticos/retenciones_fuente/', retenciones_fuente, name='retenciones_fuente'),
-    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion, name='iniciar_automatizacion'),
-    path('medios_magneticos/estado_automatizacion/', estado_automatizacion, name='estado_automatizacion'),
+    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion, name='iniciar_automatizacion')
 ]

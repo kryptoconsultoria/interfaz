@@ -86,23 +86,25 @@ def medios_magneticos(request):
         return render(request, 'medios_magneticos/base.html', {'initial_data': mark_safe(json.dumps(data))})
     return render(request, 'acceso_denegado.html')
 
-def estado_automatizacion(request):
-    estado_data = Estado.objects.order_by('idestado').last()
-    detalle = model_to_dict(estado_data) if estado_data else None
-    return JsonResponse({"estado": "exitoso" if detalle else None, "detalle": detalle})
+
 
 def iniciar_automatizacion(request):
     try:
         cliente_nombre = request.session.get('cliente_nombre')
         if not cliente_nombre:
             return json_response(False, "Faltan datos de cliente o sistema", status=400)
-        fastapi_url = settings.FASTAPI_URL
+
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
-        resp = requests.post(fastapi_url, json=payload)
-        data = resp.json() if resp.status_code == 200 else {"mensaje": "Error FastAPI", "codigo": resp.status_code}
-        return json_response(True, "Automatización iniciada", {"respuesta_fastapi": data})
+
+        resp = requests.post(settings.FASTAPI_URL, json=payload)
+        if resp.status_code == 200:
+            data = resp.json()
+            return json_response(True,"Automatizacion inciada exitosamente",data=data,status=200)
+        else:
+            return json_response(False, "Error al iniciar automatización", status=500)
     except Exception as e:
         return json_response(False, f"Error interno: {str(e)}", status=500)
+
 
 # ==================== ENDPOINTS DE SUBIDA ====================
 
