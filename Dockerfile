@@ -1,18 +1,21 @@
-# Etapa 1: Construcción del frontend con Vite
-FROM node:18 AS frontend
-
+# ┌────────── Etapa 1: Construcción del frontend con Vite ──────────────────────────────┐
+FROM node:18-slim AS frontend
 WORKDIR /app/frontend
 
+# Desactivar validación SSL (SELF_SIGNED_CERT_IN_CHAIN)
+RUN npm config set strict-ssl false
 
-COPY frontend/package*.json ./
+# 1. Copia solo package.json para evitar lockfiles no compatibles
+COPY frontend/package.json frontend/package-lock.json? ./
+
+# 2. Instala dependencias y asegura el binario nativo Linux
 RUN npm install
 
-COPY frontend/ .
+# 3. Copia el resto del frontend y construye
+COPY frontend/ ./
 RUN npm run build
 
-
-
-# Etapa 2: Backend Django
+# ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
 RUN apt-get update && apt-get install -y \
@@ -22,19 +25,21 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copiara todo menos lo que se ignora en .dockerignore
-COPY ..
+COPY . .
 
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copiar assets generados por Vite al lugar esperado por Django
-COPY --from=frontend /app/frontend/dist ./static/
+COPY --from=frontend /app/static /app/static
+
+# Ejecutar collectstatic
+RUN python manage.py collectstatic --noinput
 
 # Exponer puerto
-EXPOSE 8000
+EXPOSE 81
 
 # Comando de arranque
-CMD ["gunicorn", "django_vite.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:25"]
 
 
 

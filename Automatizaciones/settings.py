@@ -25,7 +25,7 @@ os.environ['GDAL_LIBRARY_PATH'] = r'C:\OSGeo4W64\bin\gdal306.dll'  # Ajusta seg√
 SECRET_KEY = 'django-insecure-*7!i9e$ctzhnr+#tn1dven#9+61p5#te^qh5r9uzn&ivj@@@n-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -189,7 +189,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # Default primary key field type
@@ -201,7 +200,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DJANGO_VITE = {
     "default": {
         "dev_mode": DEBUG,  # True usa servidor Vite; False usa assets compilados
-        "manifest_path": BASE_DIR / 'assets' / 'manifest.json',
+        "manifest_path": BASE_DIR / 'static' / '.vite' /'manifest.json',
         "dev_server_host": "127.0.0.1",
         "dev_server_port": 5173,
         "static_url_prefix": ''  # si quieres agrupar bajo /static/

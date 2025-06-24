@@ -62,7 +62,6 @@ export default defineConfig({
       'Access-Control-Allow-Origin': '*'
     }
   },
-  emptyOutDir: true,
   publicDir: 'public', // directorio de acceso publico
   assetsInclude: ['**/*.woff', '**/*.woff2','**/*.ttf','**/*.eot','**/*.svg']
 })
