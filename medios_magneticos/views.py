@@ -96,7 +96,7 @@ def iniciar_automatizacion(request):
 
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
 
-        resp = requests.post(settings.FASTAPI_URL, json=payload)
+        resp = requests.post(f"{settings.FASTAPI_URL}medios_magneticos", json=payload)
         if resp.status_code == 200:
             data = resp.json()
             return json_response(True,"Automatizacion inciada exitosamente",data=data,status=200)

@@ -13,10 +13,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
+import dj_database_url
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 os.environ['GDAL_LIBRARY_PATH'] = r'C:\OSGeo4W64\bin\gdal306.dll'  # Ajusta según la versión instalada
+env = environ.Env()
+
+# Cargar .env
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -82,48 +89,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Automatizaciones.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
+# Implementación de base de datos
+# https://docs.djangoproject.com/en/5.1/ref/settings/
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'mysql://mysql:CCdfdyEuDb4UkFUwsTQc1oqqzQaJySpq4Xlf6Xn28ZqPEaIJETdqTxKQEdGPWGQf@q4cg8swk8o8soc8kg8w08s0k:3306/default',
-        'PORT': '3306',
-        'NAME': 'administrator',
-        'USER': 'root',
-        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
-    },
-    'admin_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'mysql://mysql:CCdfdyEuDb4UkFUwsTQc1oqqzQaJySpq4Xlf6Xn28ZqPEaIJETdqTxKQEdGPWGQf@q4cg8swk8o8soc8kg8w08s0k:3306/default',
-        'PORT': '3306',
-        'NAME': 'administrator',
-        'USER': 'root',
-        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
-    },
-    'medios_magneticos_db': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'automatizaciones',
-        'USER': 'root',
-        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
-  }
+    'default': dj_database_url.config(
+        env='DATABASE_URL_DEFAULT',
+        conn_max_age=600,
+        conn_health_checks=True
+    ),
+    'admin_db': dj_database_url.config(
+        env='DATABASE_URL_ADMIN',
+        conn_max_age=600,
+        conn_health_checks=True
+    ),
+    'medios_magneticos_db': dj_database_url.config(
+        env='DATABASE_URL_MEDIOS',
+        conn_max_age=600,
+        conn_health_checks=True
+    ),
 }
+
 
 DATABASE_ROUTERS = ['Automatizaciones.routers.medios_magneticos.MediosMagneticosRouter',
                     'Automatizaciones.routers.django_apps_router.DjangoAppsRouter']
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -160,7 +148,7 @@ USE_TZ = True
 
 
 
-FASTAPI_URL = 'http://127.0.0.1:40//medios_magneticos'
+FASTAPI_URL = 'http://zosg8s4owc4ko48o0ow88kck.appintegria.com//'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Cambia esto dependiendo de tu proveedor de correo
 EMAIL_PORT = 587
