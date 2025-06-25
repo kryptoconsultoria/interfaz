@@ -96,19 +96,19 @@ WSGI_APPLICATION = 'Automatizaciones.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
+        'HOST': 'mysql://mysql:CCdfdyEuDb4UkFUwsTQc1oqqzQaJySpq4Xlf6Xn28ZqPEaIJETdqTxKQEdGPWGQf@q4cg8swk8o8soc8kg8w08s0k:3306/default',
         'PORT': '3306',
         'NAME': 'administrator',
         'USER': 'root',
-        'PASSWORD': 'krypto123'
+        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
     },
     'admin_db': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
+        'HOST': 'mysql://mysql:CCdfdyEuDb4UkFUwsTQc1oqqzQaJySpq4Xlf6Xn28ZqPEaIJETdqTxKQEdGPWGQf@q4cg8swk8o8soc8kg8w08s0k:3306/default',
         'PORT': '3306',
         'NAME': 'administrator',
         'USER': 'root',
-        'PASSWORD': 'krypto123'
+        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
     },
     'medios_magneticos_db': {
         'ENGINE': 'django.db.backends.mysql',
@@ -116,7 +116,7 @@ DATABASES = {
         'PORT': '3306',
         'NAME': 'automatizaciones',
         'USER': 'root',
-        'PASSWORD': 'krypto123'
+        'PASSWORD': '7L9RHwrqHHqwt54HA2C74fPDDm4q2Qj2Ew4kWEBDfm2tetFzZvJ1lqOltcuEmVhU'
   }
 }
 
