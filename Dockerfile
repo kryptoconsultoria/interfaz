@@ -18,9 +18,18 @@ RUN npm run build
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
-RUN apt-get update && apt-get install -y \
-    build-essential libpq-dev curl \
-    && rm -rf /var/lib/apt/lists/*
+# Instalar dependencias del sistema para mysqlclient
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    build-essential \
+    default-libmysqlclient-dev \
+    pkg-config \
+    python3-dev \
+    libpq-dev \
+    curl \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /app
 
