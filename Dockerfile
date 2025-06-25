@@ -27,11 +27,12 @@ WORKDIR /app
 # Copiara todo menos lo que se ignora en .dockerignore
 COPY . .
 
+# Copia el archivo de entorno si lo necesitas dentro del contenedor
+COPY .env .
+
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copia el archivo de entorno si lo necesitas dentro del contenedor
-COPY .env .
 
 # Da permisos al script
 RUN chmod +x entrypoint.sh
