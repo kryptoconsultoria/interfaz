@@ -33,7 +33,7 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY --from=frontend /app/static /app/static
 
 # Ejecutar migraciones
-RUN python python manage.py migrate --database=admin_db panel_principal
+RUN python manage.py migrate --database=admin_db panel_principal
 
 # Ejecutar collectstatic
 RUN python manage.py collectstatic --noinput
