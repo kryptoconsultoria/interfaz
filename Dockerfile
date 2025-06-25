@@ -30,10 +30,17 @@ COPY . .
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY --from=frontend /app/static /app/static
+# Copia el archivo de entorno si lo necesitas dentro del contenedor
+COPY .env .
 
-# Ejecutar migraciones
-RUN python manage.py migrate --database=admin_db panel_principal
+# Da permisos al script
+RUN chmod +x entrypoint.sh
+
+# Usa el script como entrypoint
+ENTRYPOINT ["./entrypoint.sh"]
+
+
+COPY --from=frontend /app/static /app/static
 
 # Ejecutar collectstatic
 RUN python manage.py collectstatic --noinput
