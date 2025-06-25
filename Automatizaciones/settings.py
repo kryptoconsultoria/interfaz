@@ -19,30 +19,45 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 os.environ['GDAL_LIBRARY_PATH'] = r'C:\OSGeo4W64\bin\gdal306.dll'  # Ajusta según la versión instalada
-env = environ.Env()
-
-# Cargar .env
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# Inicializa django-environ
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, 'django-insecure-default-key'),
+)
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*7!i9e$ctzhnr+#tn1dven#9+61p5#te^qh5r9uzn&ivj@@@n-'
+# Carga .env local si existe (útil en desarrollo)
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# Configuración básica
+DEBUG = env('DEBUG')
+SECRET_KEY = env('SECRET_KEY')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
-ALLOWED_HOSTS = ['*']
+
+# Urls de sharepoint
+SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
+
+# Configuracion de sharepoint
+FASTAPI_URL = env("FASTAPI_URL")
+ID_CLIENTE = env("CLIENT_ID")
+SECRETO_CLIENTE = env("CLIENT_SECRET")
+ID_TENANT = env("TENANT_ID")
+DOMINIO = env("DOMAIN")  # Ejemplo: "contoso.sharepoint.com"
+NOMBRE_SITIO = env("SITE_NAME")  # Ejemplo: "contoso.sharepoint.com"
+TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
+
 
 # Cambio de idioma
 LANGUAGE_CODE = 'es'
 USE_I18N = True
 USE_L10N = True
 
-# Application definition
 
+# Lista de aplicaciones
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -113,7 +128,7 @@ DATABASES = {
 DATABASE_ROUTERS = ['Automatizaciones.routers.medios_magneticos.MediosMagneticosRouter',
                     'Automatizaciones.routers.django_apps_router.DjangoAppsRouter']
 
-# Password validation
+# Validacion Contraseña
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -131,24 +146,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+# redirección de login
 LOGIN_REDIRECT_URL = '/panel_principal/'
 LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-
-FASTAPI_URL = 'http://zosg8s4owc4ko48o0ow88kck.appintegria.com//'
+# Correo para recuperar contraseña
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Cambia esto dependiendo de tu proveedor de correo
 EMAIL_PORT = 587
@@ -158,14 +162,9 @@ EMAIL_HOST_PASSWORD = 'tu_password'  # Tu contraseña (revisa usar contraseñas 
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 
-
 # Needed for 'debug' to be available inside templates.
 # https://docs.djangoproject.com/en/3.2/ref/templates/api/#django-template-context-processors-debug
 INTERNAL_IPS = ['127.0.0.1']
-
-
-# Vite App Dir: point it to the folder your vite app is in.
-VITE_APP_DIR = BASE_DIR / "src"
 
 
 # Static files (CSS, JavaScript, Images)
@@ -181,10 +180,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Configuración de django-vite
+# Vite App Dir: point it to the folder your vite app is in.
+VITE_APP_DIR = BASE_DIR / "src"
+
 DJANGO_VITE = {
     "default": {
         "dev_mode": DEBUG,  # True usa servidor Vite; False usa assets compilados
@@ -194,10 +196,6 @@ DJANGO_VITE = {
         "static_url_prefix": ''  # si quieres agrupar bajo /static/
     }
 }
-
-
-# Urls de sharepoint
-SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
 
 MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',

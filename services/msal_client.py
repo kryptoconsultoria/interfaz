@@ -1,6 +1,6 @@
 import msal
 from urllib.parse import urlparse, parse_qs
-
+from django.conf import settings
 
 class MSGraphAuth:
     def __init__(self, client_id, client_secret, tenant_id, refresh_token=None):
@@ -10,9 +10,9 @@ class MSGraphAuth:
         self.scopes = ["https://graph.microsoft.com/.default"]
         self.refresh_token = refresh_token
         self.app = msal.ConfidentialClientApplication(
-            client_id=self.client_id,
-            client_credential=self.client_secret,
-            authority=self.authority
+            client_id=settings.ID_CLIENTE,
+            client_credential=settings.CLIENT_SECRET,
+            authority=settings.AUTHORITY
         )
 
     def obtener_access_token(self):

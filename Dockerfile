@@ -27,22 +27,19 @@ WORKDIR /app
 # Copiara todo menos lo que se ignora en .dockerignore
 COPY . .
 
-# Copia el archivo de entorno si lo necesitas dentro del contenedor
-COPY .env .
-
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-
-# Dar permisos al entrypoint
+# Da permisos al script
 RUN chmod +x entrypoint.sh
 
-# Exponer puerto (8000 en vez de 21, porque 21 es de FTP)
+COPY --from=frontend /app/static /app/static
+
+# Ejecutar collectstatic
+RUN python manage.py collectstatic --noinput
+
+# Exponer puerto
 EXPOSE 21
 
-# Definir punto de entrada
-ENTRYPOINT ["./entrypoint.sh"]
-
-
-
-
+# Comando de arranque
+CMD ["python", "manage.py", "runserver", "0.0.0.0:21"]
