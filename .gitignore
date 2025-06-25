@@ -14,7 +14,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Configuración de entornos
-.env
+# .env ← ¡descomentar o eliminar esta línea!
 .env.local
 .settings/
 .vscode/
@@ -54,6 +54,5 @@ config.json
 
 # Caché de Machine Learning
 *.cache/
-__pycache__/
 wandb/
 mlruns/
