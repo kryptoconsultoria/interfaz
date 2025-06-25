@@ -2,10 +2,16 @@
 FROM node:18-slim AS frontend
 WORKDIR /app/frontend
 
-COPY frontend/package.json frontend/package-lock.json ./
+# Desactivar validación SSL (SELF_SIGNED_CERT_IN_CHAIN)
+RUN npm config set strict-ssl false
+
+# 1. Copia solo package.json para evitar lockfiles no compatibles
+COPY frontend/package.json ./
+
+# 2. Instala dependencias y asegura el binario nativo Linux
 RUN npm install
 
-
+# 3. Copia el resto del frontend y construye
 COPY frontend/ ./
 RUN npm run build
 

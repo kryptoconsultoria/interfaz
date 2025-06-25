@@ -26,4 +26,3 @@ dist-ssr
 # Inclusión de archivos
 !package.json
 !frontend/package.json
-!frontend/package-lock.json
