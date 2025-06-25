@@ -30,8 +30,6 @@ COPY . .
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Da permisos al script
-RUN chmod +x entrypoint.sh
 
 COPY --from=frontend /app/static /app/static
 
