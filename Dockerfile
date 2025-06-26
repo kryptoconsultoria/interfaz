@@ -48,7 +48,10 @@ COPY --from=frontend /app/static /app/static
 RUN python manage.py collectstatic --noinput
 
 # migraciones iniciales
-RUN python manage.py migrate --database=admin_db panel_principal
+# RUN python manage.py migrate --database=admin_db panel_principal
+RUN python manage.py migrate auth 0005_alter_user_last_login_null \
+    --database=admin_db && \
+    python manage.py migrate panel_principal --database=admin_db
 
 # creacion de superuser
 RUN python manage.py createsuperuser --noinput
