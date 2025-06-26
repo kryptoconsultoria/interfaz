@@ -31,7 +31,7 @@ if env_path.exists():
     environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Configuración básica
-DEBUG = env.bool('DEBUG')
+DEBUG = env.bool("DEBUG", default=False)
 SECRET_KEY = env('SECRET_KEY')
 
 
