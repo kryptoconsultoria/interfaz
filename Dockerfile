@@ -54,9 +54,6 @@ RUN python manage.py migrate auth 0005_alter_user_last_login_null \
     python manage.py migrate --database=admin_db  && \
     python manage.py migrate panel_principal --database=admin_db
 
-# creacion de superuser
-RUN python manage.py createsuperuser --noinput
-
 
 # Crear superusuario usando createsuperuser en una RUN separada
 #RUN python manage.py createsuperuser --no-input \
