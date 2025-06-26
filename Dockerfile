@@ -59,9 +59,9 @@ RUN python manage.py createsuperuser --noinput
 
 
 # Crear superusuario usando createsuperuser en una RUN separada
-RUN python manage.py createsuperuser --no-input \
-    --username "$DJANGO_SUPERUSER_USERNAME" \
-    --email "$DJANGO_SUPERUSER_EMAIL" || true
+#RUN python manage.py createsuperuser --no-input \
+#    --username "$DJANGO_SUPERUSER_USERNAME" \
+#    --email "$DJANGO_SUPERUSER_EMAIL" || true
 
 # Exponer puerto
 EXPOSE 23
