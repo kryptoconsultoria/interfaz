@@ -39,6 +39,12 @@ RUN python manage.py collectstatic --noinput
 # migraciones iniciales
 RUN python manage.py migrate --database=admin_db panel_principal
 
+# creacion de superuser
+RUN python manage.py createsuperuser --noinput \
+    --username admin \
+    --email felipe.castano@krypto.com.co \
+    --password hola123
+
 # Exponer puerto
 EXPOSE 23
 
