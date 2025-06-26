@@ -27,7 +27,14 @@
                 window.__INITIAL_DATA__ = {{ initial_data|safe }};
             </script>
             <!-- Vite entry point -->
-            <script type="module" src="http://localhost:5173/static/src/main.js"></script>  <!-- o tu build -->
+            {% if debug %}
+            <!-- Desarrollo: usa Vite dev server -->
+            <script type="module" src="http://localhost:5173/static/src/main.js"></script>
+            {% else %}
+            <!-- Producción: usa assets compilados -->
+            <script type="module" src="{% static '.vite/main.js' %}"></script>
+            <link rel="stylesheet" href="{% static '.vite/main.css' %}">
+            {% endif %}
         </div>
       </div>
     </div>
