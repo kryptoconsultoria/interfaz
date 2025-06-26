@@ -34,6 +34,7 @@ if env_path.exists():
 
 # Configuración básica
 DEBUG = env('DEBUG')
+print(DEBUG)
 SECRET_KEY = env('SECRET_KEY')
 
 
