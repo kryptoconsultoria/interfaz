@@ -20,14 +20,14 @@ FROM python:3.12 AS backend
 
 
 # 1. Definir argumentos de build para usuario, email y contraseña
-ARG DJANGO_SUPERUSER_USERNAME=felipe
-ARG DJANGO_SUPERUSER_EMAIL=felipe.castano@krypto.com.co
-ARG DJANGO_SUPERUSER_PASSWORD=hola123
+#ARG DJANGO_SUPERUSER_USERNAME=felipe
+#ARG DJANGO_SUPERUSER_EMAIL=felipe.castano@krypto.com.co
+#ARG DJANGO_SUPERUSER_PASSWORD=hola123
 
 # 2. Pasar argumentos a variables de entorno en la imagen
-ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME \
-    DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL \
-    DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
+#ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME \
+#    DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL \
+#    DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
 
 RUN apt-get update && apt-get install -y \
     build-essential libpq-dev curl \
@@ -54,9 +54,9 @@ RUN python manage.py migrate --database=admin_db  && \
 
 
 #Crear superusuario usando createsuperuser en una RUN separada
-RUN python manage.py createsuperuser --no-input \
-    --username "$DJANGO_SUPERUSER_USERNAME" \
-    --email "$DJANGO_SUPERUSER_EMAIL" || true
+#RUN python manage.py createsuperuser --no-input \
+#    --username "$DJANGO_SUPERUSER_USERNAME" \
+#   --email "$DJANGO_SUPERUSER_EMAIL" || true
 
 # Exponer puerto
 EXPOSE 23
