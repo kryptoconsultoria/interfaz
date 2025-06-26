@@ -35,7 +35,6 @@ if env_path.exists():
 # Configuración básica
 DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
 
 # Urls de sharepoint
@@ -52,10 +51,11 @@ TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
 
 
 # Origenes permitidos
-ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=[])
+ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=['*'])
 CORS_ALLOWED_ORIGINS = ALLOWED_ORIGINS
 CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS
 
+print(ALLOWED_ORIGINS)
 
 # Cambio de idioma
 LANGUAGE_CODE = 'es'

@@ -5,10 +5,10 @@ WORKDIR /app/frontend
 # Desactivar validación SSL (SELF_SIGNED_CERT_IN_CHAIN)
 RUN npm config set strict-ssl false
 
-# 1. Copia solo package.json para evitar lockfiles no compatibles
+# 1. Copiar solo package.json para evitar lockfiles no compatibles
 COPY frontend/package.json ./
 
-# 2. Instala dependencias y asegura el binario nativo Linux
+# 2. Instalar dependencias y asegura el binario nativo Linux
 RUN npm install
 
 # 3. Copia el resto del frontend y construye
@@ -32,10 +32,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 
 COPY --from=frontend /app/static /app/static
-
-# Ejecutar collectstatic
-RUN python manage.py collectstatic --noinput
-
 
 # Ejecutar collectstatic
 RUN python manage.py collectstatic --noinput
