@@ -18,6 +18,17 @@ RUN npm run build
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
+
+# 1. Definir argumentos de build para usuario, email y contraseña
+ARG DJANGO_SUPERUSER_USERNAME=felipe
+ARG DJANGO_SUPERUSER_EMAIL=felipe.castano@krypto.com.co
+ARG DJANGO_SUPERUSER_PASSWORD=hola123
+
+# 2. Pasar argumentos a variables de entorno en la imagen
+ENV DJANGO_SUPERUSER_USERNAME=$DJANGO_SUPERUSER_USERNAME \
+    DJANGO_SUPERUSER_EMAIL=$DJANGO_SUPERUSER_EMAIL \
+    DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD
+
 RUN apt-get update && apt-get install -y \
     build-essential libpq-dev curl \
     && rm -rf /var/lib/apt/lists/*
@@ -39,14 +50,14 @@ RUN python manage.py collectstatic --noinput
 # migraciones iniciales
 RUN python manage.py migrate --database=admin_db panel_principal
 
-
-# Variables de entorno para el superusuario
-ENV DJANGO_SUPERUSER_USERNAME=admin
-ENV DJANGO_SUPERUSER_EMAIL=felipe.castano@krypto.com.co
-ENV DJANGO_SUPERUSER_PASSWORD=hola123
-
 # creacion de superuser
 RUN python manage.py createsuperuser --noinput
+
+
+# Crear superusuario usando createsuperuser en una RUN separada
+RUN python manage.py createsuperuser --no-input \
+    --username "$DJANGO_SUPERUSER_USERNAME" \
+    --email "$DJANGO_SUPERUSER_EMAIL" || true
 
 # Exponer puerto
 EXPOSE 23
