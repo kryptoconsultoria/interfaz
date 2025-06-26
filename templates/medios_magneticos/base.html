@@ -32,8 +32,8 @@
             <script type="module" src="http://localhost:5173/static/src/main.js"></script>
             {% else %}
             <!-- Producción: usa assets compilados -->
-            <script type="module" src="{% static '.vite/main.js' %}"></script>
-            <link rel="stylesheet" href="{% static '.vite/main.css' %}">
+            <script type="module" src="{% vite_asset 'src/main.js' %}"></script>
+            <link rel="stylesheet" href="{% vite_asset 'src/main.js' 'css'  %}">
             {% endif %}
         </div>
       </div>
