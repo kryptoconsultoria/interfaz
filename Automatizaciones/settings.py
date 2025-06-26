@@ -18,12 +18,10 @@ import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-os.environ['GDAL_LIBRARY_PATH'] = r'C:\OSGeo4W64\bin\gdal306.dll'  # Ajusta según la versión instalada
 
 
 # Inicializa django-environ
 env = environ.Env(
-    DEBUG=(bool, False),
     SECRET_KEY=(str, 'django-insecure-default-key'),
 )
 
