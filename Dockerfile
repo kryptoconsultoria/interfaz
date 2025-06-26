@@ -37,7 +37,7 @@ COPY --from=frontend /app/static /app/static
 RUN python manage.py collectstatic --noinput
 
 # Exponer puerto
-EXPOSE 21
+EXPOSE 23
 
 # Comando de arranque
-CMD ["python", "manage.py", "runserver", "0.0.0.0:21"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
