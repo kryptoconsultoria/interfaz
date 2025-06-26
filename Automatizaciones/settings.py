@@ -15,7 +15,6 @@ from django.contrib.messages import constants as messages
 import os
 import dj_database_url
 import environ
-import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,7 +52,8 @@ TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
 
 
 # Origenes permitidos
-ALLOWED_ORIGINS = json.loads(os.getenv("ALLOWED_ORIGINS", "[]"))
+ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=[])
+CORS_ALLOWED_ORIGINS = ALLOWED_ORIGINS
 CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS
 
 
