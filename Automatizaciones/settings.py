@@ -51,7 +51,7 @@ TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
 
 
 # Origenes permitidos
-ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=['*'])
+ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=[])
 CORS_ALLOWED_ORIGINS = ALLOWED_ORIGINS
 CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS
 
