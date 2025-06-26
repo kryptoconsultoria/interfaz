@@ -36,6 +36,13 @@ COPY --from=frontend /app/static /app/static
 # Ejecutar collectstatic
 RUN python manage.py collectstatic --noinput
 
+
+# Ejecutar collectstatic
+RUN python manage.py collectstatic --noinput
+
+# migraciones iniciales
+RUN python manage.py migrate --database=admin_db panel_principal
+
 # Exponer puerto
 EXPOSE 23
 
