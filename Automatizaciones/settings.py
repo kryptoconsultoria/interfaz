@@ -15,6 +15,7 @@ from django.contrib.messages import constants as messages
 import os
 import dj_database_url
 import environ
+import json
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,6 +50,11 @@ ID_TENANT = env("TENANT_ID")
 DOMINIO = env("DOMAIN")  # Ejemplo: "contoso.sharepoint.com"
 NOMBRE_SITIO = env("SITE_NAME")  # Ejemplo: "contoso.sharepoint.com"
 TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
+
+
+# Origenes permitidos
+ALLOWED_ORIGINS = json.loads(os.getenv("ALLOWED_ORIGINS", "[]"))
+CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS
 
 
 # Cambio de idioma
