@@ -61,4 +61,4 @@ mlruns/
 !package.json
 !particles-config.json
 !bower.json
-!particles.min.js
+!static/assets/js/particle_js/particles.min.js
