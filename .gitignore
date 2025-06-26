@@ -56,3 +56,9 @@ config.json
 *.cache/
 wandb/
 mlruns/
+
+# Inclusión de archivos
+!package.json
+!particles-config.json
+!bower.json
+!particles.min.js
