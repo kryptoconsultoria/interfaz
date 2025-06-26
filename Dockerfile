@@ -49,16 +49,14 @@ RUN python manage.py collectstatic --noinput
 
 # migraciones iniciales
 # RUN python manage.py migrate --database=admin_db panel_principal
-RUN python manage.py migrate auth 0005_alter_user_last_login_null \
-    --database=admin_db && \
-    python manage.py migrate --database=admin_db  && \
+RUN python manage.py migrate --database=admin_db  && \
     python manage.py migrate panel_principal --database=admin_db
 
 
-# Crear superusuario usando createsuperuser en una RUN separada
-#RUN python manage.py createsuperuser --no-input \
-#    --username "$DJANGO_SUPERUSER_USERNAME" \
-#    --email "$DJANGO_SUPERUSER_EMAIL" || true
+#Crear superusuario usando createsuperuser en una RUN separada
+RUN python manage.py createsuperuser --no-input \
+    --username "$DJANGO_SUPERUSER_USERNAME" \
+    --email "$DJANGO_SUPERUSER_EMAIL" || true
 
 # Exponer puerto
 EXPOSE 23
