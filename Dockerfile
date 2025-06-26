@@ -39,11 +39,14 @@ RUN python manage.py collectstatic --noinput
 # migraciones iniciales
 RUN python manage.py migrate --database=admin_db panel_principal
 
+
+# Variables de entorno para el superusuario
+ENV DJANGO_SUPERUSER_USERNAME=admin
+ENV DJANGO_SUPERUSER_EMAIL=felipe.castano@krypto.com.co
+ENV DJANGO_SUPERUSER_PASSWORD=hola123
+
 # creacion de superuser
-RUN python manage.py createsuperuser --noinput \
-    --username admin \
-    --email felipe.castano@krypto.com.co \
-    --password hola123
+RUN python manage.py createsuperuser --noinput
 
 # Exponer puerto
 EXPOSE 23
