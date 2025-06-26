@@ -23,7 +23,7 @@ os.environ['GDAL_LIBRARY_PATH'] = r'C:\OSGeo4W64\bin\gdal306.dll'  # Ajusta seg�
 
 # Inicializa django-environ
 env = environ.Env(
-    DEBUG=(bool, False),
+    DEBUG=(bool, True),
     SECRET_KEY=(str, 'django-insecure-default-key'),
 )
 
@@ -34,7 +34,6 @@ if env_path.exists():
 
 # Configuración básica
 DEBUG = env('DEBUG')
-print(DEBUG)
 SECRET_KEY = env('SECRET_KEY')
 
 
