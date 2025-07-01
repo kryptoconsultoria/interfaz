@@ -25,11 +25,6 @@ env = environ.Env(
     SECRET_KEY=(str, 'django-insecure-default-key'),
 )
 
-# Carga .env local si existe (útil en desarrollo)
-env_path = BASE_DIR / '.env'
-if env_path.exists():
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
 # Configuración básica
 DEBUG = env.bool("DEBUG", default=False)
 SECRET_KEY = env('SECRET_KEY')
