@@ -196,10 +196,15 @@ if __name__ == "__main__":
     #folders = graph_api.list_folders(hostname="kryptocolombia.sharepoint.com", drive_id=drive_id,
     #                                 parent_folder_path="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/text")
 
-    result=graph_api.delete_all_files_in_folder(hostname="kryptocolombia.sharepoint.com",
-                                         drive_id=drive_id,
-                                         folder_path="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/text"
-                                         )
+    #result=graph_api.delete_all_files_in_folder(hostname="kryptocolombia.sharepoint.com",
+    #                                     drive_id=drive_id,
+    #                                     folder_path="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/text"
+    #                                     )
+
+    result = graph_api.download_file_from_sharepoint(hostname="kryptocolombia.sharepoint.com",
+                                                     drive_id=drive_id,
+                                                     folder_path="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/text",
+                                                     download_to="")
     print(result)
 
 

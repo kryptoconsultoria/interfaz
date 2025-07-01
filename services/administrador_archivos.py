@@ -138,7 +138,6 @@ class AdministradorArchivos:
             if os.path.exists(ruta_archivo_temp):
                 os.remove(ruta_archivo_temp)
 
-
 if __name__ == "__main__":
     administrador = AdministradorArchivos()
     file_content = b"huiol"
