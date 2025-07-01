@@ -1,20 +1,3 @@
-# ┌────────── Etapa 1: Construcción del frontend con Vite ──────────────────────────────┐
-FROM node:18-slim AS frontend
-WORKDIR /app/frontend
-
-# Desactivar validación SSL (SELF_SIGNED_CERT_IN_CHAIN)
-RUN npm config set strict-ssl false
-
-# 1. Copiar solo package.json para evitar lockfiles no compatibles
-COPY frontend/package.json ./
-
-# 2. Instalar dependencias y asegura el binario nativo Linux
-RUN npm install
-
-# 3. Copia el resto del frontend y construye
-COPY frontend/ ./
-RUN npm run build
-
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
@@ -29,8 +12,6 @@ COPY . .
 
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
-
-COPY --from=frontend /app/static /app/static
 
 # Migraciones (aún pueden requerir BUILD VAR)
 ARG DATABASE_URL_DEFAULT

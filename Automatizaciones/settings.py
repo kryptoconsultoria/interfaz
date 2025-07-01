@@ -191,7 +191,7 @@ DJANGO_VITE = {
     "default": {
         "dev_mode": DEBUG,  # True usa servidor Vite; False usa assets compilados
         "manifest_path": BASE_DIR / 'static' / '.vite' /'manifest.json',
-        "dev_server_host": "127.0.0.1",
+        "dev_server_host": "frontend",
         "dev_server_port": 5173,
         "static_url_prefix": ''  # si quieres agrupar bajo /static/
     }
