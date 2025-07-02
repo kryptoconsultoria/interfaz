@@ -19,66 +19,49 @@ export default {
       this.error = "";
       this.mostrarCard = false;
 
-      const MAX_RETRIES = 2;
-      const TIMEOUT_MS = 8000;
-
-      const fetchWithTimeout = async (url, options = {}) => {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-          const res = await fetch(url, {
-            ...options,
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-          }
-          return res;
-        } catch (err) {
-          if (err.name === "AbortError") {
-            throw new Error("Request timed out");
-          }
-          throw err;
-        }
-      };
-
-      const runWithRetries = async () => {
-        for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-          try {
-            return await fetchWithTimeout("/medios_magneticos/iniciar_automatizacion/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": this.obtenerTokenCSRF()
-              }
-            });
-          } catch (err) {
-            if (attempt === MAX_RETRIES) throw err;
-            const delay = 2 ** attempt * 1000;
-            await new Promise(r => setTimeout(r, delay));
-          }
-        }
-      };
-
       try {
-        const respuesta = await runWithRetries();
-        const resp = await respuesta.json();
+        // Inicia la tarea y recibe jobId
+        const resp0 = await fetch("/medios_magneticos/iniciar_automatizacion/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": this.obtenerTokenCSRF()
+          }
+        });
+        if (!resp0.ok) throw new Error(`HTTP ${resp0.status}`);
+        const { jobId } = await resp0.json();
 
-        if (resp.success) {
-          const info = resp.data;
-          this.robot = info.Tarea;
-          this.estado = info.Estado;
-          this.historiaUsuario = info.HistoriaUsuario || "";
-          this.detalleError = info.ErrorDetalle || "";
-          this.error = "";
-        } else {
-          this.error = resp.message || "Error al iniciar la automatización.";
-        }
+        // Función de polling con setTimeout
+        const pollStatus = async () => {
+          const resp1 = await fetch(`/medios_magneticos/estado/${jobId}/`);
+          if (!resp1.ok) throw new Error(`HTTP ${resp1.status}`);
+          const r = await resp1.json();
+
+          if (r.status === "pending") {
+            // Tarea no lista, esperamos unos segundos
+            setTimeout(pollStatus, 5000);
+          } else {
+            // Tarea completada: procesamos resultado
+            if (r.success) {
+              const info = r.data;
+              this.robot = info.Tarea;
+              this.estado = info.Estado;
+              this.historiaUsuario = info.HistoriaUsuario || "";
+              this.detalleError = info.ErrorDetalle || "";
+              this.error = "";
+            } else {
+              this.error = r.message || "Error en la automatización.";
+            }
+            this.cargando = false;
+            this.mostrarCard = true;
+          }
+        };
+
+        // Inicia el polling
+        pollStatus();
 
       } catch (err) {
-        this.error = "Error de red/servidor: " + err.message;
-      } finally {
+        this.error = "Error de red o servidor: " + err.message;
         this.cargando = false;
         this.mostrarCard = true;
       }
