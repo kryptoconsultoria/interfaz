@@ -55,9 +55,15 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 #    --username "$DJANGO_SUPERUSER_USERNAME" \
 #   --email "$DJANGO_SUPERUSER_EMAIL" || true
 
-# Copia el script de arranque
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# collect static
+RUN python manage.py collectstatic --noinput
+
+#Migraciones inicales admin
+RUN python manage.py migrate --database=admin_db  && \
+RUN python manage.py migrate panel_principal --database=admin_db
+
+# Ejecutar migraciones en runtime (si lo prefieres aquí)
+RUN python manage.py migrate --noinput
 
 # Exponer puerto
 EXPOSE 23
