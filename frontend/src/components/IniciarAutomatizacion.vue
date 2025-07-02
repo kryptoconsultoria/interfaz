@@ -17,51 +17,36 @@ export default {
     async iniciarAutomatizacion() {
       this.cargando = true;
       this.error = "";
-      this.mostrarCard = false;
+      this.mostrarCard = false; // Oculta la tarjeta antes de iniciar
+
+      const TIMEOUT_MS  = 600000;
 
       try {
-        // Inicia la tarea y recibe jobId
-        const resp0 = await fetch("/medios_magneticos/iniciar_automatizacion/", {
+        const respuesta = await fetch("/medios_magneticos/iniciar_automatizacion/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": this.obtenerTokenCSRF()
-          }
+          },
+          signal: AbortSignal.timeout(TIMEOUT_MS)
         });
-        if (!resp0.ok) throw new Error(`HTTP ${resp0.status}`);
-        const { jobId } = await resp0.json();
-
-        // Función de polling con setTimeout
-        const pollStatus = async () => {
-          const resp1 = await fetch(`/medios_magneticos/estado/${jobId}/`);
-          if (!resp1.ok) throw new Error(`HTTP ${resp1.status}`);
-          const r = await resp1.json();
-
-          if (r.status === "pending") {
-            // Tarea no lista, esperamos unos segundos
-            setTimeout(pollStatus, 5000);
-          } else {
-            // Tarea completada: procesamos resultado
-            if (r.success) {
-              const info = r.data;
-              this.robot = info.Tarea;
-              this.estado = info.Estado;
-              this.historiaUsuario = info.HistoriaUsuario || "";
-              this.detalleError = info.ErrorDetalle || "";
-              this.error = "";
-            } else {
-              this.error = r.message || "Error en la automatización.";
-            }
+        const resp = await respuesta.json();
+        if (resp.success == true){
+            const info = resp.data;
             this.cargando = false;
             this.mostrarCard = true;
-          }
-        };
-
-        // Inicia el polling
-        pollStatus();
-
+            this.robot = info.Tarea;
+            this.estado = info.Estado;
+            this.historiaUsuario = info.HistoriaUsuario || "";
+            this.detalleError = info.ErrorDetalle || "";
+            this.error = "";
+        } else {
+          this.mostrarCard = true;
+          this.error = resp.message || "Error al iniciar la automatización.";
+        }
       } catch (err) {
-        this.error = "Error de red o servidor: " + err.message;
+        this.error = "Error de red o servidor: " + err;
+      } finally {
         this.cargando = false;
         this.mostrarCard = true;
       }
