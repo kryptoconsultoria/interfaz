@@ -19,7 +19,7 @@ export default {
       this.error = "";
       this.mostrarCard = false; // Oculta la tarjeta antes de iniciar
 
-      const TIMEOUT_MS  = 600000;
+      const TIMEOUT_MS  = 1200000;
 
       try {
         const respuesta = await fetch("/medios_magneticos/iniciar_automatizacion/", {
