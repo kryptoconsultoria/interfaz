@@ -35,8 +35,11 @@ COPY --from=frontend /app/static /app/static
 # Migraciones (aún pueden requerir BUILD VAR)
 ARG DATABASE_URL_DEFAULT
 ARG DATABASE_URL_MEDIOS
+ARG DATABASE_URL_ADMIN
 ENV DATABASE_URL_DEFAULT=${DATABASE_URL_DEFAULT} \
-    DATABASE_URL_MEDIOS=${DATABASE_URL_MEDIOS}
+    DATABASE_URL_MEDIOS=${DATABASE_URL_MEDIOS} \
+    DATABASE_URL_ADMIN=${DATABASE_URL_ADMIN}
+
 
 # Variables de runtime
 ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
@@ -58,12 +61,12 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 # collect static
 RUN python manage.py collectstatic --noinput
 
-#Migraciones inicales admin
-RUN python manage.py migrate --database=admin_db  && \
-RUN python manage.py migrate panel_principal --database=admin_db
+# Migraciones iniciales admin
+#RUN python manage.py migrate --database=admin_db && \
+#    python manage.py migrate panel_principal --database=admin_db
 
 # Ejecutar migraciones en runtime (si lo prefieres aquí)
-RUN python manage.py migrate --noinput
+#RUN python manage.py migrate --noinput
 
 # Exponer puerto
 EXPOSE 23
