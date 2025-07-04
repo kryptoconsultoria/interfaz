@@ -3,25 +3,20 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: frontend/Dockerfile.frontend
     volumes:
       - ./frontend:/app
       - /app/node_modules
     ports:
       - '5173:5173'
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    command: npm run dev:docker
 
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
     volumes:
       - .:/app
     ports:
-      - '8000:8000'
-    depends_on:
-      - frontend
-    environment:
-      - ...
+      - '4040:4040'
+    env_file:
+      - .env

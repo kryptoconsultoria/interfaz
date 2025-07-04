@@ -34,14 +34,14 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 #Crear superusuario usando createsuperuser en una RUN separada
 #RUN python manage.py createsuperuser --no-input \
 #    --username "$DJANGO_SUPERUSER_USERNAME" \
-#   --email "$DJANGO_SUPERUSER_EMAIL" || true
+#    --email "$DJANGO_SUPERUSER_EMAIL" || true
 
 # Copia el script de arranque
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Exponer puerto
-EXPOSE 23
+EXPOSE 4040
 
 # Comando de arranque
-CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:4040"]
