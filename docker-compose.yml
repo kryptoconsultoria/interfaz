@@ -14,9 +14,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
+      args:
+        DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
+        DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
     volumes:
       - .:/app
     ports:
-      - '4040:4040'
+      - '8000:8000'
     env_file:
       - .env
+    environment:
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      DEBUG: ${DEBUG}
+      DOMAIN: ${DOMAIN}
+      FASTAPI_URL: ${FASTAPI_URL}
+      REFRESH_TOKEN: ${REFRESH_TOKEN}
+      SECRET_KEY: ${SECRET_KEY}
+      SITE_NAME: ${SITE_NAME}
+      TENANT_ID: ${TENANT_ID}
