@@ -17,6 +17,12 @@
             :disabled="!headerFiles || headerFiles.length === 0" />
           <Button @click="onClearTemplatingUpload(clearCallback)" icon="pi pi-times" rounded outlined severity="danger"
             :disabled="!headerFiles || headerFiles.length === 0" />
+          <Button
+            icon="pi pi-trash"
+            rounded
+            severity="danger"
+            aria-label="Descargar excel auxiliar 2"
+          />
         </div>
       </div>
     </template>
