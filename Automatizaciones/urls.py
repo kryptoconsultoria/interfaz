@@ -71,6 +71,9 @@ urlpatterns = [
 
     path('medios_magneticos/guardar_seleccion/', guardar_seleccion, name='guardar_seleccion'),
     path('medios_magneticos/', medios_magneticos, name='medios_magneticos'),
+    # ===================================================================================================================
+    # SUBIDA DE ARCHIVOS EN CADA ENDPOINT
+    # ===================================================================================================================
     path('medios_magneticos/balances/', balances, name='balances'),
     path('medios_magneticos/terceros/', terceros, name='terceros'),
     path('medios_magneticos/puc/', puc, name='puc'),
@@ -79,5 +82,16 @@ urlpatterns = [
     path('medios_magneticos/planillas/', planillas, name='planillas'),
     path('medios_magneticos/ingresos_retenciones/', ingresos_retenciones, name='ingresos_retenciones'),
     path('medios_magneticos/retenciones_fuente/', retenciones_fuente, name='retenciones_fuente'),
-    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion, name='iniciar_automatizacion')
+    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion, name='iniciar_automatizacion'),
+    #===================================================================================================================
+    # BORRADO DE ARCHIVOS EN CADA ENDPOINT
+    # ===================================================================================================================
+    path('medios_magneticos/balances_borrado/', balances_borrado, name='balances_borrado'),
+    path('medios_magneticos/terceros_borrado/', terceros_borrado, name='terceros_borrado'),
+    path('medios_magneticos/puc_borrado/', puc_borrado, name='puc_borrado'),
+    path('medios_magneticos/anexos_renta_borrado/', anexos_borrado, name='anexos_borrado'),
+    path('medios_magneticos/participacion_accionaria_borrado/', participacion_accionaria_borrado, name='participacion_accionaria_borrado'),
+    path('medios_magneticos/planillas_borrado/', planillas_borrado, name='planillas_borrado'),
+    path('medios_magneticos/ingresos_retenciones_borrado/', ingresos_retenciones_borrado, name='ingresos_retenciones_borrado'),
+    path('medios_magneticos/retenciones_fuente_borrado/', retenciones_fuente_borrado, name='retenciones_fuente_borrado'),
 ]

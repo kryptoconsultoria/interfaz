@@ -21,7 +21,9 @@
             icon="pi pi-trash"
             rounded
             severity="danger"
-            aria-label="Descargar excel auxiliar 2"
+            v-tooltip.bottom="'Eliminar archivos del servidor'"
+            aria-label="Eliminar archivos"
+            @click="deleteFile"
           />
         </div>
       </div>
@@ -89,7 +91,6 @@
     </template>
   </FileUpload>
 </template>
-
 <script setup>
 import { ref, reactive, getCurrentInstance } from 'vue';
 import FileUpload from 'primevue/fileupload';
@@ -101,6 +102,7 @@ import { usePrimeVue } from 'primevue/config';
 
 const props = defineProps({
   url: { type: String, required: true },
+  url_delete: { type: String, required: true },
   multiple: { type: Boolean, default: true },
   accept: { type: String, default: null },
   name: { type: String, default: null }
@@ -110,34 +112,30 @@ const toast = useToast();
 const primevue = usePrimeVue();
 const totalSize = ref(0);
 
-const formatSize = (bytes) => {
+// Funciones de utilidad
+const formatSize = bytes => {
   const sizes = primevue.config.locale?.fileSizeTypes || ['B','KB','MB','GB','TB'];
-  if (bytes == null || isNaN(bytes)) return '0 B';
+  if (!bytes || isNaN(bytes)) return '0 B';
   const i = Math.floor(Math.log(bytes)/Math.log(1024));
-  return `${(bytes/Math.pow(1024,i)).toFixed(2)} ${sizes[i]}`;
+  return `${(bytes/Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 };
 
-const statusLabel = (file) => {
-  return file.status === 'uploading'
-    ? 'Subiendo'
-    : file.status === 'success'
-      ? 'Subido'
-      : file.status === 'error'
-        ? 'Error'
-        : 'Pendiente';
+const statusLabel = file => {
+  return file.status === 'uploading' ? 'Subiendo'
+    : file.status === 'success' ? 'Subido'
+    : file.status === 'error' ? 'Error'
+    : 'Pendiente';
 };
 
-const statusSeverity = (file) => {
-  return file.status === 'uploading'
-    ? 'info'
-    : file.status === 'success'
-      ? 'success'
-      : file.status === 'error'
-        ? 'danger'
-        : 'warn';
+const statusSeverity = file => {
+  return file.status === 'uploading' ? 'info'
+    : file.status === 'success' ? 'success'
+    : file.status === 'error' ? 'danger'
+    : 'warn';
 };
 
-const onSelectedFiles = (event) => {
+// Handlers de FileUpload
+const onSelectedFiles = event => {
   const enhanced = event.files.map(f => reactive({
     __uid: Symbol(),
     name: f.name,
@@ -151,7 +149,7 @@ const onSelectedFiles = (event) => {
   totalSize.value = enhanced.reduce((sum, f) => sum + f.size, 0);
 };
 
-const onClearTemplatingUpload = (clear) => {
+const onClearTemplatingUpload = clear => {
   clear();
   totalSize.value = 0;
 };
@@ -160,7 +158,7 @@ const onRemoveTemplatingFile = (file, removeFile, idx) => {
   removeFile(idx);
 };
 
-const uploadHandler = (event) => {
+const uploadHandler = event => {
   const files = Array.isArray(event.files) ? event.files : [event.files];
   for (const file of files) {
     file.status = 'uploading';
@@ -171,13 +169,14 @@ const uploadHandler = (event) => {
     xhr.open('POST', props.url, true);
     xhr.onload = () => {
       let resp;
-      try { resp = JSON.parse(xhr.responseText) } catch {
+      try { resp = JSON.parse(xhr.responseText); }
+      catch {
         file.status = 'error';
         file.errorMessage = 'Respuesta inválida del servidor';
-        toast.add({ severity: 'error', summary: 'Error', detail: file.errorMessage, life: 5000 });
+        toast.add({ severity:'error', summary:'Error', detail:file.errorMessage, life:5000 });
         return;
       }
-      if (xhr.status >=200 && xhr.status < 300 && resp.success) {
+      if (xhr.status >= 200 && xhr.status < 300 && resp.success) {
         file.status = 'success';
         event.upload?.(file);
         toast.add({ severity:'success', summary:'¡Éxito!', detail:file.name, life:3000 });
@@ -195,4 +194,50 @@ const uploadHandler = (event) => {
     xhr.send(formData);
   }
 };
+
+// CSRF y delete handler
+const cargando = ref(false);
+
+const obtenerTokenCSRF = () => {
+  const match = document.cookie.match(/csrftoken=([^;]+)/);
+  return match ? match[1] : '';
+};
+
+const deleteFile = async (event) => {
+  cargando.value = true;
+
+  let resp = null;
+  let ok = false;
+
+  try {
+    const response = await fetch(props.url_delete, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': obtenerTokenCSRF()
+      },
+      credentials: 'same-origin'
+    });
+    resp = await response.json().catch(() => null);
+
+    if (!resp) throw new Error('Respuesta inválida del servidor');
+
+    if (response.ok && resp.success) {
+      ok = true;
+      toast.add({ severity:'success', summary:'¡Éxito!', detail:'Eliminación exitosa', life:3000 });
+    } else {
+      const msg = resp.message || 'Error al eliminar';
+      toast.add({ severity:'error', summary:'Error', detail:msg, life:5000 });
+    }
+  } catch (err) {
+    toast.add({ severity:'error', summary:'Error', detail: err.message || 'Error de red', life:5000 });
+  } finally {
+    cargando.value = false;
+    event.upload?.({
+      status: ok ? 'success' : 'error',
+      errorMessage: resp?.message || null
+    });
+  }
+};
 </script>
+

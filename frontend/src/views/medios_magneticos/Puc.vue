@@ -9,14 +9,16 @@ import SubirArchivo from '../../components/SubirArchivo.vue';
       <div class="flex gap-x-2">
         <Button
           icon="pi pi-download"
+          v-tooltip.bottom="'Descargar plantilla PUC'"
           severity="info"
           rounded
-          aria-label="Descargar excel auxiliar 1"
+          aria-label="Descargar plantilla PUC"
         />
       </div>
     </div>
     <SubirArchivo
       url="/medios_magneticos/puc/"
+      url_delete="/medios_magneticos/puc_borrado/"
       accept="text/csv"
       :multiple="false"
       name="archivo"

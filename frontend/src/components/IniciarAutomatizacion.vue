@@ -94,23 +94,29 @@ export default {
           <li><strong>Detalle del error:</strong> {{ detalleError }}</li>
         </ul>
         <p class="text-red-500 text-sm" v-else>{{ error }}</p>
+
+        <!-- Este div usa mt-auto para empujar los botones al fondo -->
+        <div class="mt-auto flex justify-end gap-x-2 pt-4">
+          <Button
+            rounded
+            v-tooltip.bottom="'Descargar medios nacionales desglosados'"
+            severity="info"
+            icon="pi pi-download"
+            size="large"
+            :disabled="cargando"
+            @click="iniciarAutomatizacion"
+          />
+          <Button
+            rounded
+            v-tooltip.bottom="'Descargar medios nacionales'"
+            severity="success"
+            icon="pi pi-download"
+            size="large"
+            :disabled="cargando"
+            @click="iniciarAutomatizacion"
+          />
+        </div>
       </template>
-      <div class="flex justify-center">
-        <Button
-          label="Descargar medios desagrupados"
-          icon="pi pi-check"
-          size="large"
-          :disabled="cargando"
-          @click="iniciarAutomatizacion"
-        />
-        <Button
-          label="Descargar medios agrupados"
-          icon="pi pi-check"
-          size="large"
-          :disabled="cargando"
-          @click="iniciarAutomatizacion"
-        />
-      </div>
     </Card>
   </div>
 </template>

@@ -137,9 +137,9 @@ class AdministradorArchivos:
         unidades = cliente_api.list_drives(self.DOMINIO)
         id_drive = unidades[3]["id"] if unidades else None
 
-        resultado = cliente_api.delete_all_files_in_folder(hostname="kryptocolombia.sharepoint.com",
+        resultado = cliente_api.delete_all_files_in_folder(hostname=self.DOMINIO,
                                                       drive_id=id_drive,
-                                                      folder_path="ruta_carpeta"
+                                                      folder_path=ruta_carpeta
                                                       )
         if resultado.get('success'):
             return {"success": True, "message": "Archivos eliminados exitosamente de la carpeta."}
