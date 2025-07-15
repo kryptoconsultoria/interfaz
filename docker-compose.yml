@@ -2,26 +2,35 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: frontend/Dockerfile.frontend
     volumes:
       - ./frontend:/app
       - /app/node_modules
     ports:
       - '5173:5173'
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    command: npm run dev:docker
 
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
+      args:
+        DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
+        DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
     volumes:
       - .:/app
     ports:
       - '8000:8000'
-    depends_on:
-      - frontend
+    env_file:
+      - .env
     environment:
-      - ...
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      DEBUG: ${DEBUG}
+      DOMAIN: ${DOMAIN}
+      FASTAPI_URL: ${FASTAPI_URL}
+      REFRESH_TOKEN: ${REFRESH_TOKEN}
+      SECRET_KEY: ${SECRET_KEY}
+      SITE_NAME: ${SITE_NAME}
+      TENANT_ID: ${TENANT_ID}

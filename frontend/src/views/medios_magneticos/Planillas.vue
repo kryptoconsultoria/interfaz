@@ -10,6 +10,7 @@ import Toast from "primevue/toast";
      Seleccione o arrastre las planillas de seguridad social
     <SubirArchivo
         url="/medios_magneticos/planillas/"
+        url_delete="/medios_magneticos/planillas_borrado/"
         accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         :multiple="true"
         name="archivo"

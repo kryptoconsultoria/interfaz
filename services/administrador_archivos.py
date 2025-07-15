@@ -1,30 +1,17 @@
-from importlib.metadata import files
-
 from .msal_client import MSGraphAuth
 from .msgraph_api import MSGraphAPI
-from dotenv import load_dotenv
-import io
 import os
+import sys
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, BASE_DIR)
 
-class NamedBytesIO(io.BytesIO):
-    """
-    BytesIO que añade un atributo `name` y un método `chunks()`
-    para poder usarse como sustituto de `UploadedFile` en pruebas.
-    """
-    def __init__(self, data: bytes, name: str):
-        super().__init__(data)
-        self.name = name            # atributo presente en UploadedFile
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Automatizaciones.settings')
 
-    # Django llama a chunks() varias veces para leer el archivo.
-    # Aquí lo replicamos con un generador.
-    def chunks(self, chunk_size: int = 8192):
-        self.seek(0)                # empezamos desde el principio
-        while True:
-            chunk = self.read(chunk_size)
-            if not chunk:
-                break
-            yield chunk
+import django
+django.setup()
+
+from django.conf import settings
 
 class AdministradorArchivos:
 
@@ -32,13 +19,12 @@ class AdministradorArchivos:
         """
         Inicializa las credenciales a partir del archivo .env y configura los servicios de MSGraph.
         """
-        load_dotenv()
-        self.ID_CLIENTE = os.getenv("CLIENT_ID")
-        self.SECRETO_CLIENTE = os.getenv("CLIENT_SECRET")
-        self.ID_TENANT = os.getenv("TENANT_ID")
-        self.DOMINIO = os.getenv("DOMAIN")  # Ejemplo: "contoso.sharepoint.com"
-        self.NOMBRE_SITIO = os.getenv("SITE_NAME")  # Ejemplo: "contoso.sharepoint.com"
-        self.TOKEN_ACTUALIZACION = os.getenv("REFRESH_TOKEN")  # Ejemplo: "obtener token"
+        self.ID_CLIENTE = settings.ID_CLIENTE
+        self.SECRETO_CLIENTE = settings.SECRETO_CLIENTE
+        self.ID_TENANT = settings.ID_TENANT
+        self.DOMINIO = settings.DOMINIO  # Ejemplo: "contoso.sharepoint.com"
+        self.NOMBRE_SITIO = settings.NOMBRE_SITIO # Ejemplo: "contoso.sharepoint.com"
+        self.TOKEN_ACTUALIZACION = settings.TOKEN_ACTUALIZACION  # Ejemplo: "obtener token"
 
     def borrar_archivos(self,ruta_carpeta):
         # borrar todos los archivos del sharepoint
@@ -108,16 +94,13 @@ class AdministradorArchivos:
             unidades = cliente_api.list_drives(self.DOMINIO)
 
             id_drive = unidades[3]["id"] if unidades else None
-
             items = cliente_api.list_files_folders(self.DOMINIO,id_drive,ruta_carpeta,"file")
 
             # Comprobar existencia exacta
             exists = any(item.get("name") == nombre_archivo for item in items)
 
-
             if exists:
                 return {"success": True, "message": "El archivo ya existe. No se subió."}
-
 
             # Subir el archivo
             resultado = cliente_api.upload_file_to_sharepoint(
@@ -138,16 +121,58 @@ class AdministradorArchivos:
             if os.path.exists(ruta_archivo_temp):
                 os.remove(ruta_archivo_temp)
 
-if __name__ == "__main__":
-    administrador = AdministradorArchivos()
-    file_content = b"huiol"
-    file_name = "archivo_simulado.txt"
-    archivo_simulado = NamedBytesIO(file_content, file_name)
+    def eliminar_archivos(self,ruta_carpeta):
+        # Crear cliente de Microsoft Graph
+        cliente_autenticacion = MSGraphAuth(
+            self.ID_CLIENTE,
+            self.SECRETO_CLIENTE,
+            self.ID_TENANT,
+            self.TOKEN_ACTUALIZACION
+        )
 
-    administrador = AdministradorArchivos()
-    res = administrador.cargar_archivo(
-        ruta_archivo=archivo_simulado,
-        ruta_carpeta="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/text"
-    )
+        token = cliente_autenticacion.renovar_access_token()
+        cliente_api = MSGraphAPI(token=token)
+
+        # Listar unidades del sitio y encontrar la requerida
+        unidades = cliente_api.list_drives(self.DOMINIO)
+        id_drive = unidades[3]["id"] if unidades else None
+
+        resultado = cliente_api.delete_all_files_in_folder(hostname=self.DOMINIO,
+                                                      drive_id=id_drive,
+                                                      folder_path=ruta_carpeta
+                                                      )
+        if resultado.get('success'):
+            return {"success": True, "message": "Archivos eliminados exitosamente de la carpeta."}
+        else:
+            return {"success": False, "message": resultado.get('error', 'Error al eliminar los archivos.')}
+
+    def descargar_archivo(self,ruta_archivo):
+        # Crear cliente de Microsoft Graph
+        cliente_autenticacion = MSGraphAuth(
+            self.ID_CLIENTE,
+            self.SECRETO_CLIENTE,
+            self.ID_TENANT,
+            self.TOKEN_ACTUALIZACION
+        )
+
+        token = cliente_autenticacion.renovar_access_token()
+        cliente_api = MSGraphAPI(token=token)
+
+        # Listar unidades del sitio y encontrar la requerida
+        unidades = cliente_api.list_drives(self.DOMINIO)
+        id_drive = unidades[3]["id"] if unidades else None
+
+        resultado = cliente_api.download_file_from_sharepoint(hostname="kryptocolombia.sharepoint.com",
+                                                      drive_id=id_drive,
+                                                      file_path=ruta_archivo
+                                                      )
+        if resultado.get('success'):
+            return {"success": True, "buffer": resultado.get('buffer')}
+        else:
+            return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
+
+
+
+
 
 
