@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from datetime import datetime, date, time, timedelta
 from django.shortcuts import render
 from medios_magneticos.models import Cliente, Sistema, Estado
 from services.administrador_archivos import AdministradorArchivos
@@ -6,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.forms.models import model_to_dict
 from django.utils.safestring import mark_safe
 from django.conf import settings
 import os
@@ -70,18 +70,22 @@ def manejo_archivos_borrado(request, subpath, allowed_ext=None):
         return json_response(False, f"Error interno: {str(e)}", status=500)
 
 # Descargar archivo del sharepoint
-def descargar_archivo(request,ruta_archivo):
-    ruta_archivo = "/Documentos/ejemplo.xlsx"  # cambia según el archivo en SharePoint
-    admin = AdministradorArchivos()
-    resultado = admin.descargar_archivo(ruta_archivo)
-    if resultado["success"]:
+def descargar_archivo(request,ruta_carpeta):
+    cliente = request.session.get('cliente_nombre')
+    if not cliente:
+        return json_response(False, "Cliente no definido en sesión", status=400)
+    try:
+        admin = AdministradorArchivos()
+        base_url = settings.SHAREPOINT_BASE_URL_MEDIOS.rstrip('/')
+        sharepoint_path = f"{base_url}/{ruta_carpeta}"
+        resultado = admin.descargar_archivo(sharepoint_path)
         buffer = resultado["buffer"]
-        nombre_archivo = ruta_archivo.split("/")[-1]
+        nombre_archivo = ruta_carpeta.split("/")[-1]
         response = HttpResponse(buffer.getvalue(), content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
         return response
-    else:
-        return HttpResponse(f"No se pudo descargar el archivo: {resultado['message']}", status=500)
+    except Exception as e:
+        return json_response(False, f"Error interno: {str(e)}", status=500)
 
 # ==================== VISTAS GENERALES ====================
 
@@ -256,3 +260,16 @@ def ingresos_retenciones_borrado(request):
     return manejo_archivos_borrado(request, 'insumos/pdf_2276')
 
 # ==================== ENDPOINTS DE DESCARGA ====================
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_puc(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_2276/{cliente}
+    return descargar_archivo(request,'insumos/excel_auxiliar')
+
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_medios(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/salidas/
+    return descargar_archivo(request,'insumos/salidas')
