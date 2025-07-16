@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
+        DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
+        DATABASE_URL_ADMIN: ${DATABASE_URL_ADMIN}
+    environment:
+      DEBUG: ${DEBUG}
+      DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
+      DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
+      DATABASE_URL_ADMIN: ${DATABASE_URL_ADMIN}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      CLIENT_ID: ${CLIENT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      DOMAIN: ${DOMAIN}
+      FASTAPI_URL: ${FASTAPI_URL}
+      REFRESH_TOKEN: ${REFRESH_TOKEN}
+      SECRET_KEY: ${SECRET_KEY}
+      SITE_NAME: ${SITE_NAME}
+      TENANT_ID: ${TENANT_ID}
+    ports:
+      - "23:23"
+    volumes:
+      - .:/app
+      - /app/static
+      - /app/staticfiles
