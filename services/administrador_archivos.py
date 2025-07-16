@@ -1,5 +1,5 @@
-from .msal_client import MSGraphAuth
-from .msgraph_api import MSGraphAPI
+from msal_client import MSGraphAuth
+from msgraph_api import MSGraphAPI
 import os
 import sys
 
@@ -162,7 +162,7 @@ class AdministradorArchivos:
         unidades = cliente_api.list_drives(self.DOMINIO)
         id_drive = unidades[3]["id"] if unidades else None
 
-        resultado = cliente_api.download_file_from_sharepoint(hostname="kryptocolombia.sharepoint.com",
+        resultado = cliente_api.download_file_from_sharepoint(hostname=self.DOMINIO,
                                                       drive_id=id_drive,
                                                       file_path=ruta_archivo
                                                       )
@@ -170,6 +170,43 @@ class AdministradorArchivos:
             return {"success": True, "buffer": resultado.get('buffer')}
         else:
             return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
+
+    def listar_archivos(self,ruta_carpeta,item_type,filter_odata=None):
+        # Crear cliente de Microsoft Graph
+        cliente_autenticacion = MSGraphAuth(
+            self.ID_CLIENTE,
+            self.SECRETO_CLIENTE,
+            self.ID_TENANT,
+            self.TOKEN_ACTUALIZACION
+        )
+
+        token = cliente_autenticacion.renovar_access_token()
+        cliente_api = MSGraphAPI(token=token)
+
+        # Listar unidades del sitio y encontrar la requerida
+        unidades = cliente_api.list_drives(self.DOMINIO)
+        id_drive = unidades[3]["id"] if unidades else None
+
+        resultado = cliente_api.list_files_folders(hostname=self.DOMINIO,
+                                                              drive_id=id_drive,
+                                                              parent_folder_path=ruta_carpeta,
+                                                              item_type=item_type,
+                                                              filter_odata=filter_odata
+                                                              )
+        if resultado.get('success'):
+            return {"success": True, "buffer": resultado.get('buffer')}
+        else:
+            return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
+
+if __name__ == "__main__":
+    administrador = AdministradorArchivos()
+    res = administrador.listar_archivos(
+        ruta_carpeta="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/salidas",
+        item_type="file"
+    )
+    print(res)
+
+
 
 
 
