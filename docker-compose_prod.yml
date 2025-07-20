@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_prod.backend
       args:
         DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
         DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
