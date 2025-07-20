@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from django.shortcuts import render
 from medios_magneticos.models import Cliente, Sistema, Estado
 from services.administrador_archivos import AdministradorArchivos
@@ -5,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.forms.models import model_to_dict
 from django.utils.safestring import mark_safe
 from django.conf import settings
 import os
@@ -24,7 +24,7 @@ def json_response(success: bool, message: str, data=None, status=200):
 # Espera que SHAREPOINT_BASE_URL_MEDIOS esté definido en settings.py, por ejemplo:
 # SHAREPOINT_BASE_URL_MEDIOS = "https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents"
 
-def handle_file_upload(request, field_name, subpath, allowed_ext=None):
+def manejo_archivo_subida(request, field_name, subpath, allowed_ext=None):
     file = request.FILES.get(field_name)
     if not file:
         return json_response(False, "No se recibió ningún archivo", status=400)
@@ -47,6 +47,42 @@ def handle_file_upload(request, field_name, subpath, allowed_ext=None):
         # Se asume que cargar_archivo acepta rutas web de SharePoint o utiliza APIs internas
         result = admin.cargar_archivo(file, sharepoint_path)
         return json_response(result.get('success', False), result.get('message', ''), {"filename": file.name})
+    except Exception as e:
+        return json_response(False, f"Error interno: {str(e)}", status=500)
+
+# Borrar archivos del sharepoint
+def manejo_archivos_borrado(request, subpath, allowed_ext=None):
+    cliente = request.session.get('cliente_nombre')
+    if not cliente:
+        return json_response(False, "Cliente no definido en sesión", status=400)
+
+    # Construcción de la ruta completa en SharePoint
+    base_url = settings.SHAREPOINT_BASE_URL_MEDIOS.rstrip('/')
+    sharepoint_path = f"{base_url}/{subpath}/{cliente}"
+
+    try:
+        admin = AdministradorArchivos()
+        # Se asume que cargar_archivo acepta rutas web de SharePoint o utiliza APIs internas
+        result = admin.eliminar_archivos(sharepoint_path)
+        return json_response(result.get('success', False), result.get('message', ''))
+    except Exception as e:
+        return json_response(False, f"Error interno: {str(e)}", status=500)
+
+# Descargar archivo del sharepoint
+def descargar_archivo(request,ruta_carpeta,nombres):
+    cliente = request.session.get('cliente_nombre')
+    if not cliente:
+        return json_response(False, "Cliente no definido en sesión", status=400)
+    try:
+        admin = AdministradorArchivos()
+        base_url = settings.SHAREPOINT_BASE_URL_MEDIOS.rstrip('/')
+        sharepoint_path = f"{base_url}/{ruta_carpeta}"
+        resultado = admin.descargar_ultimo_archivo(sharepoint_path,nombres)
+        buffer = resultado["buffer"]
+        nombre_archivo = resultado["file_name"]
+        response = FileResponse(buffer, as_attachment=True, filename=nombre_archivo)
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        return response
     except Exception as e:
         return json_response(False, f"Error interno: {str(e)}", status=500)
 
@@ -86,8 +122,6 @@ def medios_magneticos(request):
         return render(request, 'medios_magneticos/base.html', {'initial_data': mark_safe(json.dumps(data))})
     return render(request, 'acceso_denegado.html')
 
-
-
 def iniciar_automatizacion(request):
     try:
         cliente_nombre = request.session.get('cliente_nombre')
@@ -95,7 +129,7 @@ def iniciar_automatizacion(request):
             return json_response(False, "Faltan datos de cliente o sistema", status=400)
 
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
-
+        print(settings.FASTAPI_URL)
         resp = requests.post(f"{settings.FASTAPI_URL}medios_magneticos", json=payload)
         if resp.status_code == 200:
             data = resp.json()
@@ -107,34 +141,33 @@ def iniciar_automatizacion(request):
 
 
 # ==================== ENDPOINTS DE SUBIDA ====================
-
 @csrf_exempt
 @login_required
 @require_POST
 def puc(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/puc_exogena
-    return handle_file_upload(request, 'archivo', 'insumos/puc_exogena',['.csv'])
+    return manejo_archivo_subida(request, 'archivo', 'insumos/puc_exogena',['.csv'])
 
 @csrf_exempt
 @login_required
 @require_POST
 def retenciones_fuente(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1003/{cliente}
-    return handle_file_upload(request, 'archivo', 'insumos/pdf_1003', ['.pdf'])
+    return manejo_archivo_subida(request, 'archivo', 'insumos/pdf_1003', ['.pdf'])
 
 @csrf_exempt
 @login_required
 @require_POST
 def planillas(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1003/{cliente}
-    return handle_file_upload(request, 'archivo', 'insumos/pdf_1003', ['.pdf', '.xlsx'])
+    return manejo_archivo_subida(request, 'archivo', 'insumos/pdf_1003', ['.pdf', '.xlsx'])
 
 @csrf_exempt
 @login_required
 @require_POST
 def anexos(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/anexos/{cliente}
-    return handle_file_upload(request, 'archivo', 'insumos/anexos')
+    return manejo_archivo_subida(request, 'archivo', 'insumos/anexos')
 
 @csrf_exempt
 @login_required
@@ -142,7 +175,7 @@ def anexos(request):
 def balances(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return handle_file_upload(request, 'archivo', f'insumos/insumos_{sistema}/balance_terceros')
+    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/balance_terceros')
 
 @csrf_exempt
 @login_required
@@ -150,18 +183,103 @@ def balances(request):
 def terceros(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return handle_file_upload(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros')
+    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros')
 
 @csrf_exempt
 @login_required
 @require_POST
 def participacion_accionaria(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1010/{cliente}
-    return handle_file_upload(request, 'archivo', 'insumos/pdf_1010')
+    return manejo_archivo_subida(request, 'archivo', 'insumos/pdf_1010')
 
 @csrf_exempt
 @login_required
 @require_POST
 def ingresos_retenciones(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_2276/{cliente}
-    return handle_file_upload(request, 'archivo', 'insumos/pdf_2276', ['.pdf'])
+    return manejo_archivo_subida(request, 'archivo', 'insumos/pdf_2276', ['.pdf'])
+
+# ==================== ENDPOINTS DE BORRADO ====================
+@csrf_exempt
+@login_required
+@require_POST
+def puc_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/puc_exogena
+    return manejo_archivos_borrado(request,  'insumos/puc_exogena')
+
+@csrf_exempt
+@login_required
+@require_POST
+def retenciones_fuente_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1003/{cliente}
+    return manejo_archivos_borrado(request,  'insumos/pdf_1003')
+
+@csrf_exempt
+@login_required
+@require_POST
+def planillas_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1003/{cliente}
+    return manejo_archivos_borrado(request, 'insumos/pdf_1003')
+
+@csrf_exempt
+@login_required
+@require_POST
+def anexos_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/anexos/{cliente}
+    return manejo_archivos_borrado(request, 'insumos/anexos')
+
+@csrf_exempt
+@login_required
+@require_POST
+def balances_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
+    sistema = request.session.get('sistema_nombre')
+    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/balance_terceros')
+
+@csrf_exempt
+@login_required
+@require_POST
+def terceros_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
+    sistema = request.session.get('sistema_nombre')
+    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/modelo_terceros')
+
+@csrf_exempt
+@login_required
+@require_POST
+def participacion_accionaria_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_1010/{cliente}
+    return manejo_archivos_borrado(request, 'insumos/pdf_1010')
+
+@csrf_exempt
+@login_required
+@require_POST
+def ingresos_retenciones_borrado(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_2276/{cliente}
+    return manejo_archivos_borrado(request, 'insumos/pdf_2276')
+
+# ==================== ENDPOINTS DE DESCARGA ====================
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_puc(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/excel_auxiliar/
+    return descargar_archivo(request,'insumos/excel_auxiliar',['PUC'])
+
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_medios_desglosados(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/salidas/
+    usuario = request.user.username
+    cliente = request.session.get('cliente_nombre')
+    return descargar_archivo(request,'salidas',[cliente,usuario,'desglosado'])
+
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_medios(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/salidas/
+    usuario = request.user.username
+    cliente = request.session.get('cliente_nombre')
+    return descargar_archivo(request,'salidas',[cliente,usuario])

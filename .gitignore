@@ -16,6 +16,7 @@ pip-delete-this-directory.txt
 # Configuración de entornos
 .env
 .env.local
+.env
 .settings/
 .vscode/
 .idea/

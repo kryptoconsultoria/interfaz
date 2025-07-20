@@ -6,7 +6,7 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import {PrimeVueResolver} from '@primevue/auto-import-resolver';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-
+import fs from 'fs'
 
 //inject({
 // include: '**/*.js',
@@ -55,9 +55,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    strictPort: true,
-    host: '127.0.0.1',
-    origin: 'http://127.0.0.1:5173',
+    host:true,
+    origin: 'http://localhost:5173',
     headers: {
       'Access-Control-Allow-Origin': '*'
     }

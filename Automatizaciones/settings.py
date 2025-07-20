@@ -15,6 +15,7 @@ from django.contrib.messages import constants as messages
 import os
 import dj_database_url
 import environ
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,12 +30,13 @@ env = environ.Env(
 DEBUG = env.bool("DEBUG", default=False)
 SECRET_KEY = env('SECRET_KEY')
 
-
 # Urls de sharepoint
 SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
 
-# Configuracion de sharepoint
+# Configuracion fastapi
 FASTAPI_URL = env("FASTAPI_URL")
+
+# Configuracion de sharepoint medios magneticos
 ID_CLIENTE = env("CLIENT_ID")
 SECRETO_CLIENTE = env("CLIENT_SECRET")
 ID_TENANT = env("TENANT_ID")
@@ -42,13 +44,20 @@ DOMINIO = env("DOMAIN")  # Ejemplo: "contoso.sharepoint.com"
 NOMBRE_SITIO = env("SITE_NAME")  # Ejemplo: "contoso.sharepoint.com"
 TOKEN_ACTUALIZACION = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
 
+# Configuracion de sharepoint medios distritales
+# ID_CLIENTE_MEDIOS_DISTRITALES= env("CLIENT_ID")
+# SECRETO_CLIENTE_MEDIOS_DISTRITALES = env("CLIENT_SECRET")
+# ID_TENANT_MEDIOS_DISTRITALES = env("TENANT_ID")
+# DOMINIO_MEDIOS_DISTRITALES = env("DOMAIN")  # Ejemplo: "contoso.sharepoint.com"
+# NOMBRE_SITIO_MEDIOS_DISTRITALES = env("SITE_NAME")  # Ejemplo: "contoso.sharepoint.com"
+# TOKEN_ACTUALIZACION_MEDIOS_DISTRITALES = env("REFRESH_TOKEN")  # Ejemplo: "obtener token"
+
 
 # Origenes permitidos
 ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS", default=[])
 CORS_ALLOWED_ORIGINS = ALLOWED_ORIGINS
 CSRF_TRUSTED_ORIGINS = ALLOWED_ORIGINS
 ALLOWED_HOSTS = ['*']
-
 
 
 # Cambio de idioma
@@ -146,7 +155,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # redirección de login
 LOGIN_REDIRECT_URL = '/panel_principal/'
 LOGIN_URL = '/login/'
@@ -164,13 +172,17 @@ DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 
 # Needed for 'debug' to be available inside templates.
 # https://docs.djangoproject.com/en/3.2/ref/templates/api/#django-template-context-processors-debug
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ["127.0.0.1","0.0.0.0","192.168.1.55","172.20.0.2"]
+if DEBUG:
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 # Directorios adicionales donde Django buscará archivos estáticos
 STATICFILES_DIRS = [
     BASE_DIR / "static"
@@ -191,7 +203,7 @@ DJANGO_VITE = {
     "default": {
         "dev_mode": DEBUG,  # True usa servidor Vite; False usa assets compilados
         "manifest_path": BASE_DIR / 'static' / '.vite' /'manifest.json',
-        "dev_server_host": "127.0.0.1",
+        "dev_server_host": "localhost",
         "dev_server_port": 5173,
         "static_url_prefix": ''  # si quieres agrupar bajo /static/
     }
