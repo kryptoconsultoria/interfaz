@@ -1,5 +1,5 @@
-from msal_client import MSGraphAuth
-from msgraph_api import MSGraphAPI
+from .msal_client import MSGraphAuth
+from .msgraph_api import MSGraphAPI
 import os
 import sys
 
@@ -40,11 +40,11 @@ class AdministradorArchivos:
             cliente_api = MSGraphAPI(token=token)
             # Listar unidades del sitio y encontrar la requerida
             unidades = cliente_api.list_drives(self.DOMINIO)
-            id_drive = unidades[3]["id"] if unidades else None
+            id_unidad = unidades[3]["id"] if unidades else None
 
             resultado = cliente_api.delete_all_files_in_folder(
                 hostname=self.DOMINIO,
-                drive_id=id_drive,
+                drive_id=id_unidad,
                 folder_path=ruta_carpeta
             )
 
@@ -54,7 +54,6 @@ class AdministradorArchivos:
                 return {"success": False, "message": resultado.get('error', 'Error al subir el archivo.')}
         except Exception as e:
             return {"success": False, "message": str(e)}
-
 
     def cargar_archivo(self, ruta_archivo, ruta_carpeta):
         """
@@ -93,8 +92,10 @@ class AdministradorArchivos:
             # Listar unidades del sitio y encontrar la requerida
             unidades = cliente_api.list_drives(self.DOMINIO)
 
-            id_drive = unidades[3]["id"] if unidades else None
-            items = cliente_api.list_files_folders(self.DOMINIO,id_drive,ruta_carpeta,"file")
+            id_unidad = unidades[3]["id"] if unidades else None
+            resultado = cliente_api.list_files_folders(self.DOMINIO,id_unidad,ruta_carpeta,"file")
+
+            items= resultado.get("items")
 
             # Comprobar existencia exacta
             exists = any(item.get("name") == nombre_archivo for item in items)
@@ -105,7 +106,7 @@ class AdministradorArchivos:
             # Subir el archivo
             resultado = cliente_api.upload_file_to_sharepoint(
                 hostname=self.DOMINIO,
-                drive_id=id_drive,
+                drive_id=id_unidad,
                 file_path=ruta_archivo_temp,
                 folder_path=ruta_carpeta
             )
@@ -135,10 +136,10 @@ class AdministradorArchivos:
 
         # Listar unidades del sitio y encontrar la requerida
         unidades = cliente_api.list_drives(self.DOMINIO)
-        id_drive = unidades[3]["id"] if unidades else None
+        id_unidad = unidades[3]["id"] if unidades else None
 
         resultado = cliente_api.delete_all_files_in_folder(hostname=self.DOMINIO,
-                                                      drive_id=id_drive,
+                                                      drive_id=id_unidad,
                                                       folder_path=ruta_carpeta
                                                       )
         if resultado.get('success'):
@@ -146,7 +147,7 @@ class AdministradorArchivos:
         else:
             return {"success": False, "message": resultado.get('error', 'Error al eliminar los archivos.')}
 
-    def descargar_archivo(self,ruta_archivo):
+    def descargar_ultimo_archivo(self,ruta_carpeta,nombres):
         # Crear cliente de Microsoft Graph
         cliente_autenticacion = MSGraphAuth(
             self.ID_CLIENTE,
@@ -160,49 +161,36 @@ class AdministradorArchivos:
 
         # Listar unidades del sitio y encontrar la requerida
         unidades = cliente_api.list_drives(self.DOMINIO)
-        id_drive = unidades[3]["id"] if unidades else None
-
-        resultado = cliente_api.download_file_from_sharepoint(hostname=self.DOMINIO,
-                                                      drive_id=id_drive,
-                                                      file_path=ruta_archivo
-                                                      )
-        if resultado.get('success'):
-            return {"success": True, "buffer": resultado.get('buffer')}
-        else:
-            return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
-
-    def listar_archivos(self,ruta_carpeta,item_type,filter_odata=None):
-        # Crear cliente de Microsoft Graph
-        cliente_autenticacion = MSGraphAuth(
-            self.ID_CLIENTE,
-            self.SECRETO_CLIENTE,
-            self.ID_TENANT,
-            self.TOKEN_ACTUALIZACION
-        )
-
-        token = cliente_autenticacion.renovar_access_token()
-        cliente_api = MSGraphAPI(token=token)
-
-        # Listar unidades del sitio y encontrar la requerida
-        unidades = cliente_api.list_drives(self.DOMINIO)
-        id_drive = unidades[3]["id"] if unidades else None
+        id_unidad = unidades[3]["id"] if unidades else None
 
         resultado = cliente_api.list_files_folders(hostname=self.DOMINIO,
-                                                              drive_id=id_drive,
+                                                              drive_id=id_unidad,
                                                               parent_folder_path=ruta_carpeta,
-                                                              item_type=item_type,
-                                                              filter_odata=filter_odata
-                                                              )
+                                                              item_type='file',
+                                                              names=nombres
+                                                   )
+
         if resultado.get('success'):
-            return {"success": True, "buffer": resultado.get('buffer')}
-        else:
-            return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
+            # Obtener id del archivo mas reciente
+            items = resultado.get('items', [])
+            id_archivo = items[0]["id"] if items else None
+            nombre_archivo = items[0]["name"] if items else None
+            
+            resultado = cliente_api.download_file_from_sharepoint(hostname=self.DOMINIO,
+                                                                  drive_id=id_unidad,
+                                                                  file_id=id_archivo,
+                                                                  )
+            if resultado.get('success'):
+                return {"success": True, "buffer": resultado.get('buffer'),"file_name":nombre_archivo}
+            else:
+                return {"success": False, "message": resultado.get('error', 'Error al descargar el archivo')}
+
 
 if __name__ == "__main__":
     administrador = AdministradorArchivos()
-    res = administrador.listar_archivos(
-        ruta_carpeta="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/salidas",
-        item_type="file"
+    res = administrador.descargar_ultimo_archivo(
+        ruta_carpeta="Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/insumos/excel_auxiliar",
+        nombres=["PUC"]
     )
     print(res)
 

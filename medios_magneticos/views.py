@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from datetime import datetime, date, time, timedelta
+from django.http import FileResponse
 from django.shortcuts import render
 from medios_magneticos.models import Cliente, Sistema, Estado
 from services.administrador_archivos import AdministradorArchivos
@@ -70,7 +69,7 @@ def manejo_archivos_borrado(request, subpath, allowed_ext=None):
         return json_response(False, f"Error interno: {str(e)}", status=500)
 
 # Descargar archivo del sharepoint
-def descargar_archivo(request,ruta_carpeta):
+def descargar_archivo(request,ruta_carpeta,nombres):
     cliente = request.session.get('cliente_nombre')
     if not cliente:
         return json_response(False, "Cliente no definido en sesión", status=400)
@@ -78,11 +77,11 @@ def descargar_archivo(request,ruta_carpeta):
         admin = AdministradorArchivos()
         base_url = settings.SHAREPOINT_BASE_URL_MEDIOS.rstrip('/')
         sharepoint_path = f"{base_url}/{ruta_carpeta}"
-        resultado = admin.descargar_archivo(sharepoint_path)
+        resultado = admin.descargar_ultimo_archivo(sharepoint_path,nombres)
         buffer = resultado["buffer"]
-        nombre_archivo = ruta_carpeta.split("/")[-1]
-        response = HttpResponse(buffer.getvalue(), content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+        nombre_archivo = resultado["file_name"]
+        response = FileResponse(buffer, as_attachment=True, filename=nombre_archivo)
+        response.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
         return response
     except Exception as e:
         return json_response(False, f"Error interno: {str(e)}", status=500)
@@ -130,7 +129,7 @@ def iniciar_automatizacion(request):
             return json_response(False, "Faltan datos de cliente o sistema", status=400)
 
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
-
+        print(settings.FASTAPI_URL)
         resp = requests.post(f"{settings.FASTAPI_URL}medios_magneticos", json=payload)
         if resp.status_code == 200:
             data = resp.json()
@@ -264,12 +263,23 @@ def ingresos_retenciones_borrado(request):
 @login_required
 @require_POST
 def descargar_puc(request):
-    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/pdf_2276/{cliente}
-    return descargar_archivo(request,'insumos/excel_auxiliar')
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/excel_auxiliar/
+    return descargar_archivo(request,'insumos/excel_auxiliar',['PUC'])
+
+@csrf_exempt
+@login_required
+@require_POST
+def descargar_medios_desglosados(request):
+    # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/salidas/
+    usuario = request.user.username
+    cliente = request.session.get('cliente_nombre')
+    return descargar_archivo(request,'salidas',[cliente,usuario,'desglosado'])
 
 @csrf_exempt
 @login_required
 @require_POST
 def descargar_medios(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/salidas/
-    return descargar_archivo(request,'insumos/salidas')
+    usuario = request.user.username
+    cliente = request.session.get('cliente_nombre')
+    return descargar_archivo(request,'salidas',[cliente,usuario])

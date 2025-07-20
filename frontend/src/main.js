@@ -28,6 +28,7 @@ import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
 import ToastService from 'primevue/toastservice';
+import Toast from 'primevue/toast';
 
 import AppState from './plugins/appState.js';
 import Noir from './presets/Noir.js';

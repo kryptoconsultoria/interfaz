@@ -94,4 +94,10 @@ urlpatterns = [
     path('medios_magneticos/planillas_borrado/', planillas_borrado, name='planillas_borrado'),
     path('medios_magneticos/ingresos_retenciones_borrado/', ingresos_retenciones_borrado, name='ingresos_retenciones_borrado'),
     path('medios_magneticos/retenciones_fuente_borrado/', retenciones_fuente_borrado, name='retenciones_fuente_borrado'),
+    # ===================================================================================================================
+    # DESCARGA DE ARCHIVOS
+    # ===================================================================================================================
+    path('medios_magneticos/descargar_puc/', descargar_puc,name='descargar_puc'),
+    path('medios_magneticos/descargar_medios_desglosados/', descargar_medios_desglosados,name='descargar_medios_desglosados'),
+    path('medios_magneticos/descargar_medios/', descargar_medios,name='descargar_medios'),
 ]

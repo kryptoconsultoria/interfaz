@@ -34,3 +34,4 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       SITE_NAME: ${SITE_NAME}
       TENANT_ID: ${TENANT_ID}
+    tty: true

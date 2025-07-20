@@ -123,67 +123,70 @@ class MSGraphAPI:
             "message": f"Archivo '{file_name}' subido correctamente en {total_chunks} fragmentos."
         }
 
-    def download_file_from_sharepoint(self, hostname, drive_id, file_path):
+    def download_file_from_sharepoint(self, hostname, drive_id, file_id):
         """
-        Descarga un archivo desde SharePoint a una ruta local.
-        :param hostname: Dominio del sitio de SharePoint (e.g., 'kryptocolombia.sharepoint.com').
-        :param drive_id: ID de la biblioteca de documentos (drive).
-        :param file_path: Ruta del archivo dentro del drive (e.g., 'folder1/folder2/file.pdf').
-        :param download_to: Ruta local donde se guardará el archivo descargado.
-        :return: Ruta local del archivo descargado si fue exitoso.
+        Descarga un archivo desde SharePoint usando su ID de elemento.
+
+        :param hostname: Dominio del sitio de SharePoint (p.ej., 'kryptocolombia.sharepoint.com').
+        :param drive_id: ID de la biblioteca de documentos (dnrive).
+        :param file_id: ID del archivo (driveItem) que se desea descargar.
+        :return: dict con {"success": True, "buffer": BytesIO} si se descarga correctamente,
+                 o lanza excepción en caso de error.
         """
-        encoded_path = self._encode(file_path)
-        url = f"https://graph.microsoft.com/v1.0/sites/{hostname}/drives/{drive_id}/root:/{encoded_path}:/content"
+        url = f"https://graph.microsoft.com/v1.0/sites/{hostname}/drives/{drive_id}/items/{file_id}/content"
         headers = {"Authorization": f"Bearer {self.token}"}
 
         response = requests.get(url, headers=headers, stream=True, verify=True)
-
         if response.status_code == 200:
             buffer = io.BytesIO()
             for chunk in response.iter_content(chunk_size=8192):
                 buffer.write(chunk)
             buffer.seek(0)
-            return {"success": True, "buffer":buffer}
+            return {"success": True, "buffer": buffer}
         else:
-            raise Exception(
-                f"Error al descargar el archivo: {response.status_code}, {response.text}"
-            )
+            raise Exception(f"Error al descargar el archivo: {response.status_code}, {response.text}")
 
-    def list_files_folders(self, hostname, drive_id, parent_folder_path="", item_type="folder", filter_odata=None):
+
+    def list_files_folders(self,hostname,drive_id,parent_folder_path="",item_type="folder",names=None,match_all=True):
         """
-        Lista archivos o carpetas dentro de un drive en SharePoint, ordenados por fecha de creación.
-
-        :param hostname: Dominio del sitio de SharePoint (ej. "example.sharepoint.com").
+        Lista las carpetas dentro de un drive en SharePoint.
+        :param hostname: Dominio del sitio de SharePoint (por ejemplo, "example.sharepoint.com").
         :param drive_id: ID del drive.
-        :param parent_folder_path: Ruta de la carpeta padre (vacía para raíz).
-        :param item_type: "folder" para carpetas, "file" para archivos.
-        :param filter_odata: Filtro OData adicional (ej. "$filter=startswith(name,'2025')").
-        :return: Lista de elementos del tipo especificado, ordenados por fecha de creación descendente.
+        :param parent_folder_path: Ruta de la carpeta padre dentro del drive. Opcional.
+        :return: Lista de carpetas en el nivel especificado.
         """
-        base_url = f"https://graph.microsoft.com/v1.0/sites/{hostname}/drives/{drive_id}"
 
-        if parent_folder_path:
-            url = f"{base_url}/root:/{parent_folder_path}:/children?$orderby=createdDateTime"
+        base = f"https://graph.microsoft.com/v1.0/sites/{hostname}/drives/{drive_id}"
+        url = f"{base}/root:/{parent_folder_path}:/children" if parent_folder_path else f"{base}/root/children"
+
+        resp = requests.get(url, headers={"Authorization": f"Bearer {self.token}"})
+        items = resp.json().get("value", [])
+
+        # Ordena por fecha de creación (descendente)
+        items.sort(key=lambda i: i.get("createdDateTime", ""), reverse=True)
+
+        # Normaliza 'names' para filtrado
+        if names is None:
+            terms = []
+        elif isinstance(names, str):
+            terms = [names]
+        elif isinstance(names, (list, tuple)):
+            terms = names
         else:
-            url = f"{base_url}/root/children?$orderby=createdDateTime"
+            raise ValueError("names debe ser str, lista de str o None")
 
-        if filter_odata:
-            url += f"&{filter_odata}"
 
-        print(url)
+        def matches(item):
+            if item_type not in item:
+                return False
+            nm = item.get("name", "")
+            if not terms:
+                return True
+            checks = [term in nm for term in terms]
+            return all(checks) if match_all else any(checks)
 
-        headers = {"Authorization": f"Bearer {self.token}"}
-        response = requests.get(url, headers=headers)
-        print(response)
-
-        if response.status_code == 200:
-            data = response.json().get("value", [])
-            filtered = [item for item in data if item_type in item]
-            return filtered
-        else:
-            raise Exception(
-                f"Error al listar elementos: {response.status_code}, {response.text}"
-            )
+        filtered = [it for it in items if matches(it)]
+        return {"success": True, "items": filtered}
 
 
 
