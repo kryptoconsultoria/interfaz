@@ -55,6 +55,8 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 #    --username "$DJANGO_SUPERUSER_USERNAME" \
 #   --email "$DJANGO_SUPERUSER_EMAIL" || true
 
+RUN python manage.py collectstatic
+
 # Exponer puerto
 EXPOSE 23
 
