@@ -55,10 +55,6 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 #    --username "$DJANGO_SUPERUSER_USERNAME" \
 #   --email "$DJANGO_SUPERUSER_EMAIL" || true
 
-# Copia el script de arranque
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 # Exponer puerto
 EXPOSE 23
 
