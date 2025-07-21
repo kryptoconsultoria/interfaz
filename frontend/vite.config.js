@@ -6,7 +6,6 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import {PrimeVueResolver} from '@primevue/auto-import-resolver';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import fs from 'fs'
 
 //inject({
 // include: '**/*.js',
@@ -40,13 +39,12 @@ export default defineConfig({
     include: ['jquery']
   },*/
   build: {
-    manifest: true,
+    manifest: 'manifest.json',
     outDir: resolve(__dirname, '../static'),
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/main.js')
       },
-      write: true,
     },
   },
   resolve: {
