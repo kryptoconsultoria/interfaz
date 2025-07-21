@@ -31,7 +31,6 @@ COPY . .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copiar los assets estáticos generados por Vite
-COPY --from=frontend /app/static/.vite /app/static/.vite
 COPY --from=frontend /app/static /app/static/
 
 # Variables de entorno para Django
