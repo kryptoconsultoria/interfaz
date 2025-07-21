@@ -39,7 +39,7 @@ export default defineConfig({
     include: ['jquery']
   },*/
   build: {
-    manifest: 'manifest.json',
+    manifest: true,
     outDir: resolve(__dirname, '../static'),
     rollupOptions: {
       input: {
