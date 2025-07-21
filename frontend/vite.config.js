@@ -40,7 +40,8 @@ export default defineConfig({
   },*/
   build: {
     manifest: true,
-    outDir: resolve(__dirname, '../static'),
+    emptyOutDir: true,
+    outDir: resolve(__dirname, '../static/frontend'),
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/main.js')
