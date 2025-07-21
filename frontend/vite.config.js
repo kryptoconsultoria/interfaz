@@ -41,11 +41,13 @@ export default defineConfig({
   },*/
   build: {
     manifest: true,
-    outDir: resolve(__dirname, '../static/.vite'),
+    outDir: resolve(__dirname, '../static'),
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/main.js')
       },
+      write: true,
+      assetsDir: '.vite/assets'
     },
   },
   resolve: {

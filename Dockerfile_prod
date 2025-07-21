@@ -1,45 +1,47 @@
 # ┌────────── Etapa 1: Construcción del frontend con Vite ──────────────────────────────┐
-FROM node:18-slim AS frontend
+FROM node:18 AS frontend
 WORKDIR /app/frontend
 
-# Desactivar validación SSL (SELF_SIGNED_CERT_IN_CHAIN)
+# Desactivar validación SSL
 RUN npm config set strict-ssl false
 
-# 1. Copiar solo package.json para evitar lockfiles no compatibles
-COPY frontend/package.json ./
+# Copiar solo package.json para cacheo de dependencias
+COPY frontend/ ./
 
-# 2. Instalar dependencias y asegura el binario nativo Linux
+# Instalar dependencias
 RUN npm install
 
-# 3. Copia el resto del frontend y construye
-COPY frontend/ ./
+# Copiar el resto del frontend
 RUN npm run build
 
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
 RUN apt-get update && apt-get install -y \
-    build-essential libpq-dev curl \
+    build-essential \
+    libpq-dev \
+    default-libmysqlclient-dev \
+    pkg-config \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copiara todo menos lo que se ignora en .dockerignore
+# Copiar el proyecto Django completo
 COPY . .
 
-# Instalar dependencias de Python
+# Instalar dependencias Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY --from=frontend /app/static/.vite /app/static/.vite
+# Copiar los assets estáticos generados por Vite
+COPY --from=frontend /app/static /app/static/
 
-# Migraciones (aún pueden requerir BUILD VAR)
+# Variables de entorno para Django
 ARG DATABASE_URL_DEFAULT
 ARG DATABASE_URL_MEDIOS
 ENV DATABASE_URL_DEFAULT=${DATABASE_URL_DEFAULT} \
-    DATABASE_URL_MEDIOS=${DATABASE_URL_MEDIOS}
-
-# Variables de runtime
-ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
+    DATABASE_URL_MEDIOS=${DATABASE_URL_MEDIOS} \
+    ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
     CLIENT_ID=${CLIENT_ID} \
     CLIENT_SECRET=${CLIENT_SECRET} \
     DEBUG=${DEBUG:-False} \
@@ -53,8 +55,7 @@ ENV ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
 # Ejecutar collectstatic
 RUN python manage.py collectstatic --noinput
 
-# Exponer puerto
-EXPOSE 23
+# Exponer puerto (ajusta si usas gunicorn)
+EXPOSE 8000
 
-# Comando de arranque
-CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
