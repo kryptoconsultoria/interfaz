@@ -1,5 +1,5 @@
 # ┌────────── Etapa 1: Construcción del frontend con Vite ──────────────────────────────┐
-FROM node:18 AS frontend
+FROM node:18-slim AS frontend
 WORKDIR /app/frontend
 
 # Desactivar validación SSL
