@@ -81,6 +81,7 @@ class AdministradorArchivos:
             token = cliente_autenticacion.renovar_access_token()
             cliente_api = MSGraphAPI(token=token)
             nombre_archivo = ruta_archivo.name
+            os.makedirs("../temp/", exist_ok=True)
             ruta_archivo_temp = f"temp/{nombre_archivo}"
 
 
