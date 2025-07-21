@@ -24,7 +24,7 @@ services:
       SITE_NAME: ${SITE_NAME}
       TENANT_ID: ${TENANT_ID}
     ports:
-      - "23:23"
+      - "8000:23"
     tty: true
     volumes:
       - .:/app

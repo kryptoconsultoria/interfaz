@@ -39,9 +39,8 @@ export default defineConfig({
     include: ['jquery']
   },*/
   build: {
-    manifest: 'manifest.json',
-    outDir: resolve(__dirname, '../static/frontend'),
-    emptyOutDir: true,
+    manifest: true,
+    outDir: resolve(__dirname, '../static'),
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/main.js')
