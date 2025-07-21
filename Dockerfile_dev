@@ -33,6 +33,6 @@ ENV DATABASE_URL_DEFAULT=${DATABASE_URL_DEFAULT} \
 RUN python manage.py collectstatic --noinput
 
 # Exponer puerto (ajusta si usas gunicorn)
-EXPOSE 23
+EXPOSE 8080
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
