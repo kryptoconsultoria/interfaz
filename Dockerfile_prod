@@ -6,7 +6,7 @@ WORKDIR /app/frontend
 RUN npm config set strict-ssl false
 
 # Copiar solo package.json para cacheo de dependencias
-COPY frontend/package.json frontend/package-lock.json ./
+COPY frontend/package.json ./
 
 # Instalar dependencias
 RUN npm install
