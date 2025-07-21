@@ -9,7 +9,7 @@ register = template.Library()
 # registrar en prod los assets precompilados con el hash correcto
 @register.simple_tag
 def vite_asset(entry_name, filetype="js"):
-    manifest_path = Path(settings.BASE_DIR) / "static" / "manifest.json"
+    manifest_path = Path(settings.BASE_DIR) / "static" /  "frontend" /  "manifest.json"
     try:
         with open(manifest_path, "r") as f:
             manifest = json.load(f)
