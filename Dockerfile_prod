@@ -33,9 +33,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copiar los assets estáticos generados por Vite
 COPY --from=frontend /app/static /app/static/
 
-RUN echo "-- contenido completo de /app/frontend --" \
-  && ls -R /app/static
-
 # Variables de entorno para Django
 ARG DATABASE_URL_DEFAULT
 ARG DATABASE_URL_MEDIOS
