@@ -15,8 +15,6 @@ RUN npm install
 COPY frontend/ ./
 RUN npm run build
 
-COPY --from=frontend /app/static/.vite /app/static/.vite
-
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
 FROM python:3.12 AS backend
 
@@ -33,6 +31,7 @@ COPY . .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copiar los assets estáticos generados por Vite
+COPY --from=frontend /app/static/.vite /app/static/.vite
 COPY --from=frontend /app/static /app/static/
 
 # Variables de entorno para Django
