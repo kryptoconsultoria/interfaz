@@ -6,12 +6,13 @@ WORKDIR /app/frontend
 RUN npm config set strict-ssl false
 
 # Copiar solo package.json para cacheo de dependencias
-COPY frontend/ ./
+COPY frontend/package.json ./
 
 # Instalar dependencias
 RUN npm install
 
 # Copiar el resto del frontend
+COPY frontend/ ./
 RUN npm run build
 
 # ┌────────── Etapa 2: Backend Django ──────────────────────────────┐
