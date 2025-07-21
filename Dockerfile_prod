@@ -19,7 +19,11 @@ RUN npm run build
 FROM python:3.12 AS backend
 
 RUN apt-get update && apt-get install -y \
-    build-essential libpq-dev curl \
+    build-essential \
+    libpq-dev \
+    default-libmysqlclient-dev \
+    pkg-config \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
