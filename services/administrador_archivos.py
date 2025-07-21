@@ -69,7 +69,6 @@ class AdministradorArchivos:
         - Un diccionario con el resultado de la carga.
         """
         try:
-
             # Crear cliente de Microsoft Graph
             cliente_autenticacion = MSGraphAuth(
                 self.ID_CLIENTE,
@@ -82,7 +81,6 @@ class AdministradorArchivos:
             cliente_api = MSGraphAPI(token=token)
             nombre_archivo = ruta_archivo.name
             ruta_archivo_temp = f"temp/{nombre_archivo}"
-
 
             # Guardar archivo de forma temporal en el sistema
             with open(ruta_archivo_temp, "wb+") as archivo_temporal:
