@@ -47,7 +47,6 @@ export default defineConfig({
         main: resolve(__dirname, 'src/main.js')
       },
       write: true,
-      assetsDir: '.vite/assets'
     },
   },
   resolve: {
