@@ -32,27 +32,3 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copiar los assets estáticos generados por Vite
 COPY --from=frontend /app/static /app/static/
-
-# Variables de entorno para Django
-ARG DATABASE_URL_DEFAULT
-ARG DATABASE_URL_MEDIOS
-ENV DATABASE_URL_DEFAULT=${DATABASE_URL_DEFAULT} \
-    DATABASE_URL_MEDIOS=${DATABASE_URL_MEDIOS} \
-    ALLOWED_ORIGINS=${ALLOWED_ORIGINS} \
-    CLIENT_ID=${CLIENT_ID} \
-    CLIENT_SECRET=${CLIENT_SECRET} \
-    DEBUG=${DEBUG:-False} \
-    DOMAIN=${DOMAIN} \
-    FASTAPI_URL=${FASTAPI_URL} \
-    REFRESH_TOKEN=${REFRESH_TOKEN} \
-    SECRET_KEY=${SECRET_KEY} \
-    SITE_NAME=${SITE_NAME} \
-    TENANT_ID=${TENANT_ID}
-
-# Ejecutar collectstatic
-RUN python manage.py collectstatic --noinput
-
-# Exponer puerto (ajusta si usas gunicorn)
-EXPOSE 23
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:23"]
