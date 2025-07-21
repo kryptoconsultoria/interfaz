@@ -41,7 +41,7 @@ export default defineConfig({
   },*/
   build: {
     manifest: true,
-    outDir: resolve(__dirname, '../static'),
+    outDir: resolve(__dirname, '../static/.vite'),
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/main.js')
