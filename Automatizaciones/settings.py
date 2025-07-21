@@ -32,6 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 # Urls de sharepoint
 SHAREPOINT_BASE_URL_MEDIOS = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/07 Medios Magnéticos/'
+SHAREPOINT_BASE_URL_MEDIOS_DISTRITALES = 'Innovación y Tecnología/IntegrIA/Proyectos automatización/11 Medios Distritales/'
 
 # Configuracion fastapi
 FASTAPI_URL = env("FASTAPI_URL")
@@ -76,7 +77,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_vite',
     'panel_principal',
-    'medios_magneticos'
+    'medios_magneticos',
+    'medios_distritales'
 ]
 
 MIDDLEWARE = [

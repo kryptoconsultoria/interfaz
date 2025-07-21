@@ -51,6 +51,23 @@
                 </ul>
               </div>
             </li>
+            <li class="nav-item {% if request.resolver_match.url_name in 'medios_distritales' %}active submenu{% endif %}">
+              <a data-bs-toggle="collapse" href="#base"
+                 aria-expanded="{% if request.resolver_match.url_name in 'medios_distritales' %}true{% else %}false{% endif %}">
+                <i class="fas fa-layer-group"></i>
+                <p>Medios distritales</p>
+                <span class="caret"></span>
+              </a>
+              <div class="collapse {% if request.resolver_match.url_name in 'medios_distritales' %}show{% endif %}" id="base">
+                <ul class="nav nav-collapse">
+                  <li class="{% if request.resolver_match.url_name == 'medios_distritales' %}active{% endif %}">
+                    <a href="{% url 'medios_distritales' %}">
+                      <span class="sub-item">Iniciar</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
         </ul>
       </div>
     </div>

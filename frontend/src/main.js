@@ -75,4 +75,7 @@ app.use(ToastService);
 app.use(ConfirmationService);
 app.use(ToastService);
 app.use(DialogService);
+
+// Montar widgets django vite
 app.mount("#medios-magneticos");
+app.mount("#medios-distritales");
