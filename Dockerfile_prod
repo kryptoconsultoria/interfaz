@@ -30,7 +30,7 @@ COPY . .
 # Instalar dependencias de Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY --from=frontend /app/static /app/static
+COPY --from=frontend /app/static/.vite /app/static/.vite
 
 # Migraciones (aún pueden requerir BUILD VAR)
 ARG DATABASE_URL_DEFAULT
