@@ -5,7 +5,6 @@
 __pycache__/
 *.swp
 *.swo
-__init__py
 
 # Entornos virtuales
 .venv/
