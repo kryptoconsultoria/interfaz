@@ -122,14 +122,13 @@ def medios_distritales(request):
         return render(request, 'medios_distritales/base.html', {'initial_data': mark_safe(json.dumps(data))})
     return render(request, 'acceso_denegado.html')
 
-def iniciar_automatizacion(request):
+def iniciar_automatizacion_distritales(request):
     try:
         cliente_nombre = request.session.get('cliente_nombre')
         if not cliente_nombre:
             return json_response(False, "Faltan datos de cliente o sistema", status=400)
-
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
-        print(settings.FASTAPI_URL)
+        print('estoy llamando distritales')
         resp = requests.post(f"{settings.FASTAPI_URL}medios_distritales", json=payload)
         if resp.status_code == 200:
             data = resp.json()
@@ -144,7 +143,7 @@ def iniciar_automatizacion(request):
 @csrf_exempt
 @login_required
 @require_POST
-def puc(request):
+def puc_distritales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/puc_exogena
     return manejo_archivo_subida(request, 'archivo', 'insumos/puc_exogena',['.csv'])
 
@@ -165,7 +164,7 @@ def rete_ica(request):
 @csrf_exempt
 @login_required
 @require_POST
-def balances(request):
+def balances_distritales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/balance_terceros')
@@ -173,7 +172,7 @@ def balances(request):
 @csrf_exempt
 @login_required
 @require_POST
-def terceros(request):
+def terceros_distritales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros')
@@ -191,14 +190,14 @@ def anexo_ica(request):
 @csrf_exempt
 @login_required
 @require_POST
-def puc_borrado(request):
+def puc_distritales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/puc_exogena
     return manejo_archivos_borrado(request,  'insumos/puc_exogena')
 
 @csrf_exempt
 @login_required
 @require_POST
-def balances_borrado(request):
+def balances_distritales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/balance_terceros')
@@ -206,7 +205,7 @@ def balances_borrado(request):
 @csrf_exempt
 @login_required
 @require_POST
-def terceros_borrado(request):
+def terceros_distritales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/modelo_terceros')

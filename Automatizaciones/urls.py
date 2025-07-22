@@ -43,11 +43,11 @@ urlpatterns = [
     # ==================== MEDIOS MAGNÉTICOS ====================
     path('medios_magneticos/', medios_magneticos, name='medios_magneticos'),
     path('medios_magneticos/guardar_seleccion/', guardar_seleccion, name='guardar_seleccion'),
-    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion, name='iniciar_automatizacion'),
+    path('medios_magneticos/iniciar_automatizacion/', iniciar_automatizacion_nacionales, name='iniciar_automatizacion_nacionales'),
 
     # Subida
-    path('medios_magneticos/balances/', balances, name='balances'),
-    path('medios_magneticos/terceros/', terceros, name='terceros'),
+    path('medios_magneticos/balances_nacionales/', balances_nacionales, name='balances'),
+    path('medios_magneticos/terceros_nacionales/', terceros_nacionales, name='terceros'),
     path('medios_magneticos/puc/', puc, name='puc'),
     path('medios_magneticos/anexos_renta/', anexos, name='anexos'),
     path('medios_magneticos/participacion_accionaria/', participacion_accionaria, name='participacion_accionaria'),
@@ -56,8 +56,8 @@ urlpatterns = [
     path('medios_magneticos/retenciones_fuente/', retenciones_fuente, name='retenciones_fuente'),
 
     # Borrado
-    path('medios_magneticos/balances_borrado/', balances_borrado, name='balances_borrado'),
-    path('medios_magneticos/terceros_borrado/', terceros_borrado, name='terceros_borrado'),
+    path('medios_magneticos/balances_borrado_nacionales/', balances_nacionales_borrado, name='balances_borrado_nacionales'),
+    path('medios_magneticos/terceros_borrado_nacionales/', terceros_nacionales_borrado, name='terceros_borrado_nacionales'),
     path('medios_magneticos/puc_borrado/', puc_borrado, name='puc_borrado'),
     path('medios_magneticos/anexos_renta_borrado/', anexos_borrado, name='anexos_borrado'),
     path('medios_magneticos/participacion_accionaria_borrado/', participacion_accionaria_borrado, name='participacion_accionaria_borrado'),
@@ -73,20 +73,20 @@ urlpatterns = [
     # ==================== MEDIOS DISTRITALES ====================
     path('medios_distritales/', medios_distritales, name='medios_distritales'),
     path('medios_distritales/guardar_seleccion/', guardar_seleccion, name='guardar_seleccion_distritales'),
-    path('medios_distritales/iniciar/', iniciar_automatizacion, name='iniciar_distritales'),
+    path('medios_distritales/iniciar_automatizacion/', iniciar_automatizacion_distritales, name='iniciar_distritales'),
 
     # Subida
     path('medios_distritales/puc/', puc, name='puc_distritales'),
     path('medios_distritales/rete_ica_terceros/', rete_ica_terceros, name='rete_ica_terceros'),
     path('medios_distritales/rete_ica/', rete_ica, name='rete_ica'),
-    path('medios_distritales/balances/', balances, name='balances_distritales'),
-    path('medios_distritales/terceros/', terceros, name='terceros_distritales'),
+    path('medios_distritales/balances/', balances_distritales, name='balances_distritales'),
+    path('medios_distritales/terceros/', terceros_distritales, name='terceros_distritales'),
     path('medios_distritales/anexo_ica/', anexo_ica, name='anexo_ica'),
 
     # Borrado
-    path('medios_distritales/puc_borrado/', puc_borrado, name='puc_borrado_distritales'),
-    path('medios_distritales/balances_borrado/', balances_borrado, name='balances_borrado_distritales'),
-    path('medios_distritales/terceros_borrado/', terceros_borrado, name='terceros_borrado_distritales'),
+    path('medios_distritales/puc_borrado/', puc_distritales_borrado, name='puc_borrado_distritales'),
+    path('medios_distritales/balances_borrado_distritales/', balances_distritales_borrado, name='balances_borrado_distritales'),
+    path('medios_distritales/terceros_borrado_distritales/', terceros_distritales_borrado, name='terceros_borrado_distritales'),
     path('medios_distritales/rete_ica_terceros_borrado/', rete_ica_terceros_borrado, name='rete_ica_terceros_borrado'),
     path('medios_distritales/rete_ica_borrado/', rete_ica_borrado, name='rete_ica_borrado'),
     path('medios_distritales/anexo_ica_borrado/', anexo_ica_borrado, name='anexo_ica_borrado'),

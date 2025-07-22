@@ -122,18 +122,17 @@ def medios_magneticos(request):
         return render(request, 'medios_magneticos/base.html', {'initial_data': mark_safe(json.dumps(data))})
     return render(request, 'acceso_denegado.html')
 
-def iniciar_automatizacion(request):
+def iniciar_automatizacion_nacionales(request):
     try:
         cliente_nombre = request.session.get('cliente_nombre')
         if not cliente_nombre:
             return json_response(False, "Faltan datos de cliente o sistema", status=400)
 
         payload = {"cliente": cliente_nombre, "usuario": request.user.username}
-        print(settings.FASTAPI_URL)
         resp = requests.post(f"{settings.FASTAPI_URL}medios_magneticos", json=payload)
         if resp.status_code == 200:
             data = resp.json()
-            return json_response(True,"Automatizacion inciada exitosamente",data=data,status=200)
+            return json_response(True,"Automatizacion iniciada exitosamente",data=data,status=200)
         else:
             return json_response(False, "Error al iniciar automatización", status=500)
     except Exception as e:
@@ -172,7 +171,7 @@ def anexos(request):
 @csrf_exempt
 @login_required
 @require_POST
-def balances(request):
+def balances_nacionales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/balance_terceros')
@@ -180,7 +179,7 @@ def balances(request):
 @csrf_exempt
 @login_required
 @require_POST
-def terceros(request):
+def terceros_nacionales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros')
@@ -231,7 +230,7 @@ def anexos_borrado(request):
 @csrf_exempt
 @login_required
 @require_POST
-def balances_borrado(request):
+def balances_nacionales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/balance_terceros')
@@ -239,7 +238,7 @@ def balances_borrado(request):
 @csrf_exempt
 @login_required
 @require_POST
-def terceros_borrado(request):
+def terceros_nacionales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
     return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/modelo_terceros')

@@ -31,7 +31,7 @@ export default {
             "Content-Type": "application/json",
             "X-CSRFToken": this.obtenerTokenCSRF()
           },
-          signal: AbortSignal.timeout(TIMEOUT_MS)
+          signal: AbortSignal.timeout(TIMEOUT_MS),
         });
         const resp = await respuesta.json();
         if (resp.success == true){

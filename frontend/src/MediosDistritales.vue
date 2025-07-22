@@ -134,14 +134,14 @@ const pasos = [
         </div>
       </StepPanel>
 
-      <StepPanel v-slot="{ activateCallback }" value="8">
+      <StepPanel v-slot="{ activateCallback }" value="7">
         <div class="flex flex-col h-full">
           <div class="border border-gray-300 rounded-md p-4 bg-white shadow-md">
             <Iniciar />
           </div>
         </div>
         <div class="pt-6">
-          <Button label="Atrás" severity="secondary" icon="pi pi-arrow-left" @click="activateCallback('7')" />
+          <Button label="Atrás" severity="secondary" icon="pi pi-arrow-left" @click="activateCallback('6')" />
         </div>
       </StepPanel>
     </StepPanels>

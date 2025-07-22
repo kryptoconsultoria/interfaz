@@ -33,6 +33,7 @@ export default {
           },
           signal: AbortSignal.timeout(TIMEOUT_MS)
         });
+        console.log("testeonacionales");
         const resp = await respuesta.json();
         if (resp.success == true){
             const info = resp.data;
