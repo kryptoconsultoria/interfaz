@@ -25,7 +25,7 @@ export default {
       const TIMEOUT_MS  = 1200000;
 
       try {
-        const respuesta = await fetch("/medios_magneticos/iniciar_automatizacion/", {
+        const respuesta = await fetch("/medios_distritales/iniciar_automatizacion/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

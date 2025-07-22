@@ -1,13 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue';
-import Puc from './views/medios_magneticos/Puc.vue';
-import DocumentosPDF from './views/medios_magneticos/DocumentosPDF.vue';
-import Terceros from './views/medios_magneticos/Terceros.vue';
-import Balances from './views/medios_magneticos/Balances.vue';
-import AnexosRenta from './views/medios_magneticos/AnexosRenta.vue';
-import Planillas from './views/medios_magneticos/Planillas.vue';
-import Iniciar from './views/medios_magneticos/Iniciar.vue';
-import SeleccionSistema from "@/views/medios_magneticos/SeleccionSistema.vue";
+import AnexoIca from './views/medios_distritales/AnexoIca.vue';
+import Puc from './views/medios_distritales/Puc.vue';
+import DocumentosPDF from './views/medios_distritales/DocumentosPDF.vue';
+import Terceros from './views/medios_distritales/Terceros.vue';
+import Balances from './views/medios_distritales/Balances.vue';
+import Iniciar from './views/medios_distritales/Iniciar.vue';
+import SeleccionSistema from "@/views/medios_distritales/SeleccionSistema.vue";
 
 const seleccion = ref(null);
 

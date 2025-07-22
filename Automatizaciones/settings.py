@@ -133,10 +133,16 @@ DATABASES = {
         conn_max_age=600,
         conn_health_checks=True
     ),
+    'medios_distritales_db': dj_database_url.config(
+        env='DATABASE_URL_MEDIOS',
+        conn_max_age=600,
+        conn_health_checks=True
+    ),
 }
 
 
 DATABASE_ROUTERS = ['Automatizaciones.routers.medios_magneticos.MediosMagneticosRouter',
+                    'Automatizaciones.routers.medios_distritales.MediosdistritalesRouter',
                     'Automatizaciones.routers.django_apps_router.DjangoAppsRouter']
 
 # Validacion Contraseña

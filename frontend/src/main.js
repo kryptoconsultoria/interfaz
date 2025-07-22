@@ -24,6 +24,7 @@ import 'primeicons/primeicons.css';
 // Prime vue librerias componentes drag and drop y select sistema
 import { createApp } from 'vue'
 import MediosMagneticos from './MediosMagneticos.vue';
+import MediosDistritales from './MediosDistritales.vue';
 import PrimeVue from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
@@ -54,12 +55,9 @@ import Noir from './presets/Noir.js';
 //  }
 //});
 
-
-
-const app = createApp(MediosMagneticos);
-
-
-app.use(PrimeVue, {
+// Medios nacionales
+const app1 = createApp(MediosMagneticos);
+app1.use(PrimeVue, {
     theme: {
         preset: Noir,
         options: {
@@ -70,12 +68,35 @@ app.use(PrimeVue, {
     }
 });
 
-app.use(AppState);
-app.use(ToastService);
-app.use(ConfirmationService);
-app.use(ToastService);
-app.use(DialogService);
+app1.use(AppState);
+app1.use(ToastService);
+app1.use(ConfirmationService);
+app1.use(ToastService);
+app1.use(DialogService);
 
 // Montar widgets django vite
-app.mount("#medios-magneticos");
-app.mount("#medios-distritales");
+app1.mount("#medios-magneticos");
+
+
+
+// Medios distritales
+const app2 = createApp(MediosDistritales);
+app2.use(PrimeVue, {
+    theme: {
+        preset: Noir,
+        options: {
+            prefix: 'p',
+            darkModeSelector: '.p-dark',
+            cssLayer: false,
+        }
+    }
+});
+
+app2.use(AppState);
+app2.use(ToastService);
+app2.use(ConfirmationService);
+app2.use(ToastService);
+app2.use(DialogService);
+
+// Montar widgets django vite
+app2.mount("#medios-distritales");
