@@ -1,10 +1,10 @@
 <script setup>
 
-import IniciarAutomatizacion from "@/components/IniciarAutomatizacion.vue";
+import IniciarMediosDistritales from "@/components/IniciarMediosDistritales.vue";
 </script>
 
 <template>
-<IniciarAutomatizacion />
+<IniciarMediosDistritales />
 </template>
 
 <style scoped>
