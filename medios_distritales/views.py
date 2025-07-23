@@ -24,7 +24,7 @@ def json_response(success: bool, message: str, data=None, status=200):
 # Espera que SHAREPOINT_BASE_URL_MEDIOS_DISTRITALES esté definido en settings.py, por ejemplo:
 # SHAREPOINT_BASE_URL_MEDIOS_DISTRITALES = "https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents"
 
-def manejo_archivo_subida(request, field_name, subpath, allowed_ext=None):
+def manejo_archivo_subida(request, field_name, subpath, allowed_ext=None, aditional_path=''):
     file = request.FILES.get(field_name)
     if not file:
         return json_response(False, "No se recibió ningún archivo", status=400)
@@ -35,7 +35,7 @@ def manejo_archivo_subida(request, field_name, subpath, allowed_ext=None):
 
     # Construcción de la ruta completa en SharePoint
     base_url = settings.SHAREPOINT_BASE_URL_MEDIOS_DISTRITALES.rstrip('/')
-    sharepoint_path = f"{base_url}/{subpath}/{cliente}"
+    sharepoint_path = f"{base_url}/{subpath}/{cliente}{aditional_path}"
 
     # Validación de extensión
     ext = os.path.splitext(file.name)[1].lower()
@@ -51,14 +51,14 @@ def manejo_archivo_subida(request, field_name, subpath, allowed_ext=None):
         return json_response(False, f"Error interno: {str(e)}", status=500)
 
 # Borrar archivos del sharepoint
-def manejo_archivos_borrado(request, subpath, allowed_ext=None):
+def manejo_archivos_borrado(request, subpath, aditional_path=''):
     cliente = request.session.get('cliente_nombre')
     if not cliente:
         return json_response(False, "Cliente no definido en sesión", status=400)
 
     # Construcción de la ruta completa en SharePoint
     base_url = settings.SHAREPOINT_BASE_URL_MEDIOS_DISTRITALES.rstrip('/')
-    sharepoint_path = f"{base_url}/{subpath}/{cliente}"
+    sharepoint_path = f"{base_url}/{subpath}/{cliente}{aditional_path}"
 
     try:
         admin = AdministradorArchivos()
@@ -167,7 +167,7 @@ def rete_ica(request):
 def balances_distritales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/balance_terceros')
+    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}',aditional_path=f'/balance_terceros')
 
 @csrf_exempt
 @login_required
@@ -175,7 +175,7 @@ def balances_distritales(request):
 def terceros_distritales(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros')
+    return manejo_archivo_subida(request, 'archivo', f'insumos/insumos_{sistema}/modelo_terceros',aditional_path=f'/listado_terceros')
 
 @csrf_exempt
 @login_required
@@ -200,7 +200,7 @@ def puc_distritales_borrado(request):
 def balances_distritales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/balance_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/balance_terceros')
+    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}',aditional_path=f'/balance_terceros')
 
 @csrf_exempt
 @login_required
@@ -208,7 +208,7 @@ def balances_distritales_borrado(request):
 def terceros_distritales_borrado(request):
     # Ruta de SharePoint: https://empresa.sharepoint.com/sites/medios_distritales/Shared Documents/insumos/insumos_{sistema}/modelo_terceros/{cliente}
     sistema = request.session.get('sistema_nombre')
-    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}/modelo_terceros')
+    return manejo_archivos_borrado(request, f'insumos/insumos_{sistema}',aditional_path=f'/listado_terceros')
 
 @csrf_exempt
 @login_required
