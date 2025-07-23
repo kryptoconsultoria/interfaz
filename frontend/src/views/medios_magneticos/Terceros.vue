@@ -8,8 +8,8 @@ import Toast from "primevue/toast";
      <Toast />
      Seleccione o arrastre el modelo de terceros
      <SubirArchivo
-        url="/medios_magneticos/terceros/"
-        url_delete="/medios_magneticos/terceros_borrado/"
+        url="/medios_magneticos/terceros_nacionales/"
+        url_delete="/medios_magneticos/terceros_nacionales_borrado/"
         accept="text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         :multiple="false"
         name="archivo"

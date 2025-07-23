@@ -9,8 +9,8 @@ import Toast from "primevue/toast";
      <Toast />
      Seleccione o arrastre el último balance a la fecha
      <SubirArchivo
-        url="/medios_magneticos/balances/"
-        url_delete="/medios_magneticos/balances_borrado/"
+        url="/medios_magneticos/balances_nacionales/"
+        url_delete="/medios_magneticos/balances_nacionales_borrado/"
         accept="text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         :multiple="false"
         name="archivo"

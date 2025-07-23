@@ -9,6 +9,8 @@ services:
       - /app/node_modules
     ports:
       - '5173:5173'
+    networks:
+      - application
 
   backend:
     build:
@@ -17,10 +19,11 @@ services:
       args:
         DATABASE_URL_DEFAULT: ${DATABASE_URL_DEFAULT}
         DATABASE_URL_MEDIOS: ${DATABASE_URL_MEDIOS}
+        DATABASE_URL_MEDIOS_DISTRITALES: ${DATABASE_URL_MEDIOS_DISTRITALES}
     volumes:
       - .:/app
     ports:
-      - '8080:8080'
+      - '8000:8000'
     env_file:
       - .env
     environment:
@@ -35,3 +38,9 @@ services:
       SITE_NAME: ${SITE_NAME}
       TENANT_ID: ${TENANT_ID}
     tty: true
+    networks:
+      - application
+
+networks:
+  application:
+    driver: bridge

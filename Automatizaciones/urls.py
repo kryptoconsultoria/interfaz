@@ -56,8 +56,8 @@ urlpatterns = [
     path('medios_magneticos/retenciones_fuente/', retenciones_fuente, name='retenciones_fuente'),
 
     # Borrado
-    path('medios_magneticos/balances_borrado_nacionales/', balances_nacionales_borrado, name='balances_borrado_nacionales'),
-    path('medios_magneticos/terceros_borrado_nacionales/', terceros_nacionales_borrado, name='terceros_borrado_nacionales'),
+    path('medios_magneticos/balances_nacionales_borradp/', balances_nacionales_borrado, name='balances_borrado_nacionales'),
+    path('medios_magneticos/terceros_nacionales_borrado/', terceros_nacionales_borrado, name='terceros_borrado_nacionales'),
     path('medios_magneticos/puc_borrado/', puc_borrado, name='puc_borrado'),
     path('medios_magneticos/anexos_renta_borrado/', anexos_borrado, name='anexos_borrado'),
     path('medios_magneticos/participacion_accionaria_borrado/', participacion_accionaria_borrado, name='participacion_accionaria_borrado'),
@@ -85,8 +85,8 @@ urlpatterns = [
 
     # Borrado
     path('medios_distritales/puc_borrado/', puc_distritales_borrado, name='puc_borrado_distritales'),
-    path('medios_distritales/balances_borrado_distritales/', balances_distritales_borrado, name='balances_borrado_distritales'),
-    path('medios_distritales/terceros_borrado_distritales/', terceros_distritales_borrado, name='terceros_borrado_distritales'),
+    path('medios_distritales/balances_distritales_borrado/', balances_distritales_borrado, name='balances_borrado_distritales'),
+    path('medios_distritales/terceros_distritales_borrado/', terceros_distritales_borrado, name='terceros_borrado_distritales'),
     path('medios_distritales/rete_ica_terceros_borrado/', rete_ica_terceros_borrado, name='rete_ica_terceros_borrado'),
     path('medios_distritales/rete_ica_borrado/', rete_ica_borrado, name='rete_ica_borrado'),
     path('medios_distritales/anexo_ica_borrado/', anexo_ica_borrado, name='anexo_ica_borrado'),
