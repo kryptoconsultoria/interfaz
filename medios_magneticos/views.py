@@ -24,7 +24,7 @@ def json_response(success: bool, message: str, data=None, status=200):
 # Espera que SHAREPOINT_BASE_URL_MEDIOS esté definido en settings.py, por ejemplo:
 # SHAREPOINT_BASE_URL_MEDIOS = "https://empresa.sharepoint.com/sites/medios_magneticos/Shared Documents"
 
-def manejo_archivo_subida(request, field_name, subpath,allowed_ext=None,aditional_path=None):
+def manejo_archivo_subida(request, field_name, subpath,allowed_ext=None,aditional_path=''):
     file = request.FILES.get(field_name)
     if not file:
         return json_response(False, "No se recibió ningún archivo", status=400)
@@ -51,7 +51,7 @@ def manejo_archivo_subida(request, field_name, subpath,allowed_ext=None,aditiona
         return json_response(False, f"Error interno: {str(e)}", status=500)
 
 # Borrar archivos del sharepoint
-def manejo_archivos_borrado(request, subpath,aditional_path=None):
+def manejo_archivos_borrado(request, subpath,aditional_path=''):
     cliente = request.session.get('cliente_nombre')
     if not cliente:
         return json_response(False, "Cliente no definido en sesión", status=400)
