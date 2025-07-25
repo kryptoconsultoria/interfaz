@@ -15,6 +15,7 @@ class Cliente(models.Model):
     class Meta:
         managed = False
         db_table = 'cliente'
+        verbose_name_plural = "Clientes"
 
     def __str__(self):
         return self.nombre
@@ -27,6 +28,11 @@ class Sistema(models.Model):
     class Meta:
         managed = False
         db_table = 'sistema'
+        verbose_name_plural = "Sistemas"
+
+    def __str__(self):
+        return self.nombre
+
 
 class Estado(models.Model):
     idestado = models.AutoField(db_column='IdEstado', primary_key=True)  # Field name made lowercase.
